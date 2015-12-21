@@ -62,3 +62,12 @@ build/
 
 ## OS Specific
 .DS_Store
+
+## Graphical Assets
+android/assets/
+desktop/bin/*.pack
+desktop/bin/*.jpg
+desktop/bin/*.png
+dekstop/bin/*.mp3
+desktop/bin/*.ttf
+desktop/bin/*.fnt
