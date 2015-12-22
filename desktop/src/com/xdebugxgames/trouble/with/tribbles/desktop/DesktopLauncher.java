@@ -26,4 +26,16 @@ public class DesktopLauncher implements IActivityRequestHandler {
 	public void sendMsg(String msgg) {
 		if (msgg.equals("showCPAd")) GV.exit=true;
 	}
+
+	@Override
+	public void saveGame(byte[] s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loadGame() {
+		// TODO Auto-generated method stub
+		
+	}
 }

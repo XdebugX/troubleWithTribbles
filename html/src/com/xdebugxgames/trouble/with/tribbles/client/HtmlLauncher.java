@@ -23,4 +23,16 @@ public class HtmlLauncher extends GwtApplication implements IActivityRequestHand
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public void saveGame(byte[] s) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void loadGame() {
+			// TODO Auto-generated method stub
+			
+		}
 }

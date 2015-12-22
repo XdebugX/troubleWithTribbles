@@ -23,7 +23,15 @@ public class Tribbles extends Game implements ApplicationListener {
 		gameScreen = new GameScreen (this);
 		creditsScreen = new CreditsScreen (this);
 		
-		GV.lastAdShown=0;//System.currentTimeMillis()-(long) (1000.0f*60.0f*2.5f);		
+		
+		GV.opts = saveOptions.loadOptions();
+		if (GV.opts==null) {
+			GV.opts = new Options ();
+			GV.opts.musicOn=true;
+			GV.opts.sfxOn=true;
+			saveOptions.save(GV.opts);
+		}
+		
 		setScreen(splashScreen); 		
 	}
 
@@ -54,6 +62,10 @@ public class Tribbles extends Game implements ApplicationListener {
 	@Override
 	public void resume() {
 		super.resume();
+	}
+	
+	public void saveOpts () {
+		saveOptions.save(GV.opts);
 	}
 		
 }

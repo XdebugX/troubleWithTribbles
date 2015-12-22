@@ -16,11 +16,11 @@ public class TH {
 	public static TextureAtlas atlasGame,atlasMenu;
 	private static Array <AtlasRegion>  aa;
 	
-	 public static final int numTextures = 2, numAnimations = 0;	
+	 public static final int numTextures = 11, numAnimations = 0;	
 	 public static final int numMusic=0;
 	 public static final int numSfxs=0;
-	 public static TextureRegion texts[];
-	 public static float textsW[],textsH[],animW[],animH[];
+	 public static TextureRegion texts[],strips[];
+	 public static float textsW[],textsH[],stripsW[],stripsH[],animW[],animH[];
 	 public static BitmapFont bf;
      public static Music loopingMusic[];
 	 public static Sound sfxs[];
@@ -29,8 +29,11 @@ public class TH {
 	 public static final String sfxsFN[] = {};
 	 public static final String animFN[] = {};
 	 public static final int ItxtShip=0,ItxtTurret=1;
-	 public static final String textsFN[]={"ship","turret"};
+	 public static final int ItxtAsteroids=0,ItxtComets=4,ItxtUfo=8,ItxtPlanet=9,ItxtSatt=10;
+	 public static final String textsFN[]={"Asteroid1","Asteroid2","Asteroid3","Asteroid4","Comet1","Comet2","Comet3","Comet4","ufo","planet","satt"};
+	 public static final String stripsFN[]={"20","30","40"};
 	 public static final int menuItems[] ={};
+	 public static final int multiples[] ={11,12,13};
 	 
 	 public static Animation Anims[];
 	 public static final float animationLength [] = {0.4f,1.7f};
@@ -52,7 +55,10 @@ public class TH {
 		 		animH[p]=Anims[p].getKeyFrame(0).getRegionHeight()*GV.aspRatL;
 		 	}
 
-		 			 	
+		 	for (p=0;p<30;p++) {
+		 	stripsW[p]=strips[p].getRegionWidth()*GV.aspRatW;
+		 	stripsH[p]=strips[p].getRegionHeight()*GV.aspRatW;
+		 	}	
  	
 	 }
 	 public static void dispose () {
@@ -61,8 +67,7 @@ public class TH {
 	 }
 	 
 	 public static void loadSounds () {
-		 int p=0,t=0;
-
+		 int p=0;
 		 	TH.loopingMusic = new Music [TH.numMusic];
 			TH.sfxs = new Sound [TH.numSfxs];
 
@@ -87,13 +92,27 @@ public class TH {
 		animW=new float[numAnimations];
 		animH=new float[numAnimations];
 		Anims = new Animation [numAnimations];
+		strips = new TextureRegion [30];
+		stripsW = new float [30];
+		stripsH = new float [30];
 		
 	 
 	 	for (p=0;p<numTextures;p++) {
 	 		menu=false;
+	 			 		
 	 		//for (t=0;t<menuItems.length;t++) if (menuItems[t]==p) menu=true;
+	 		
 	 		if (menu==false) texts[p] = atlasGame.findRegion(textsFN[p]); else texts[p] = atlasMenu.findRegion(textsFN[p]);
 	 		texts[p].flip(false, true);
+	 		}
+
+	 	int i=0;
+	 	for (p=0;p<stripsFN.length;p++) {
+		 	aa=atlasGame.findRegions(stripsFN[p]);
+			for (t=0;t<aa.size;t++) {
+				strips[i]=aa.get(t);
+				strips[i++].flip(false, true);
+			}
 	 	}
 	 	
 		for (p=0;p<numAnimations;p++) {

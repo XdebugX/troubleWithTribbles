@@ -30,5 +30,17 @@ public class IOSLauncher extends IOSApplication.Delegate implements IActivityReq
 	@Override
 	public void sendMsg(String msgg) {
 	}
+
+	@Override
+	public void saveGame(byte[] s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loadGame() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

@@ -4,10 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -76,7 +74,6 @@ public class MMScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
-		int p=0;
 		camera = new OrthographicCamera(GV.w, GV.h);
 		camera.setToOrtho(true, GV.w, GV.h);
 		camera.position.set(GV.w / 2, GV.h / 2, 0);
@@ -138,7 +135,6 @@ public class MMScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown (int x, int y, int pointer, int button) {
-		int p=0,a=0;
 		selectBlobOn=false;
 		selectBlobI=10;
 		
@@ -157,7 +153,6 @@ public class MMScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
-		int p=0,a=0;
 		selectBlobOn=false;
 
 		return true;

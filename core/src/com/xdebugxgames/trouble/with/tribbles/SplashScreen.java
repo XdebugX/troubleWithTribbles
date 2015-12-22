@@ -24,7 +24,6 @@ public class SplashScreen implements Screen {
 	private OrthographicCamera camera;
 	private Texture texture;
 	private TextureRegion TxRegion,txrProg;
-	private int p=0;
 	float progress,progress2,txtW,txtH;
 	private static boolean done,done2;
 

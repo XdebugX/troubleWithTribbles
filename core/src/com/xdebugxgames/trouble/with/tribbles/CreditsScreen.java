@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 
 
 public class CreditsScreen implements Screen, InputProcessor {
@@ -23,11 +22,8 @@ public class CreditsScreen implements Screen, InputProcessor {
 	private static GlyphLayout glphLay;
 	private static BitmapFontData bfD;
 
-	private static float fntH,creditTextScale,strTextW[];
-	private static float stripY[],stripSegH;
-	private static int stripNum40[],stripNum20[],stripNum10[],numStrips;
-
-
+	private static float fntH,creditTextScale;
+	
 
 
 	// constructor to keep a reference to the main Game class
@@ -38,7 +34,6 @@ public class CreditsScreen implements Screen, InputProcessor {
 	@Override
 	public void render(float delta) {
 		if (delta>0.033333f) delta = 0.033333f;
-		int p=0;
 		////////////////////////////////////////////// Render //////////////////////////////////////////////////////////		
 		 Gdx.gl.glClearColor( 0, 0, 0, 1 );
 		 Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
@@ -74,7 +69,6 @@ public class CreditsScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
-		int p=0;
 		camera = new OrthographicCamera(GV.w, GV.h);
 		camera.setToOrtho(true, GV.w, GV.h);
 		camera.position.set(GV.w / 2, GV.h / 2, 0);
@@ -157,7 +151,7 @@ public class CreditsScreen implements Screen, InputProcessor {
 	private static void sizes () {
 		bfD = TH.bf.getData();
 
-		float a=0,b=0;
+		float a=0;
 		float z=0.01f;
 		int breaker=0;
 				
@@ -166,9 +160,8 @@ public class CreditsScreen implements Screen, InputProcessor {
 			bfD.setScale(z);
 			glphLay = new GlyphLayout (TH.bf,"AWHIL!,qpw?.");
 			a=glphLay.height;
-			b=glphLay.width;
 			breaker++;
-		} while (a<GV.h*0.05f && breaker<500);
+		} while (a<GV.h*0.05f && breaker<1500);
 		
 		creditTextScale = z;
 		

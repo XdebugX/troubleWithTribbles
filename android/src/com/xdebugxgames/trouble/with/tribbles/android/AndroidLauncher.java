@@ -23,4 +23,16 @@ public class AndroidLauncher extends AndroidApplication implements IActivityRequ
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void saveGame(byte[] s) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loadGame() {
+		// TODO Auto-generated method stub
+		
+	}
 }
