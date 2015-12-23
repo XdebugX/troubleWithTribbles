@@ -6,10 +6,12 @@ import com.badlogic.gdx.math.MathUtils;
 
 public class Background {
 	
-	public float stripSegH,stripY[],planetX,planetY,sattX,sattY;
-	public int p,numStrips,stripNum40[],stripNum20[],stripNum10[];
-	public boolean isPlanet,isSatt;
+	public float stripSegH,stripY[],planetX,planetY,sattX,sattY,asteroidX,asteroidY,asteroidSpeed,cometX,cometY,cometSpeed;
+	public int p,numStrips,stripNum40[],stripNum20[],stripNum10[],asteroidType,cometType;
+	public boolean isPlanet,isSatt,asteroidDX,asteroidDY,asteroidHV,asteroidOnScreen,cometDX,cometOnScreen;
 	public long nextComet,nextAsteroid,nextUFO;
+	public static final int asteroidInterval=10000;
+	public static final float cometSlope[] = {0.9f,1.25f,0.5f,1.0f};
 	
 	
 	public Background () {
@@ -38,9 +40,12 @@ public class Background {
 				sattY=MathUtils.random(0.0f,GV.h);
 			}
 
-			nextComet = MathUtils.random(10000);
-			nextAsteroid = MathUtils.random(10000);
-			nextUFO = MathUtils.random(10000);
+			nextComet = System.currentTimeMillis()+MathUtils.random(asteroidInterval);
+			nextAsteroid = System.currentTimeMillis()+MathUtils.random(asteroidInterval);
+			nextUFO = System.currentTimeMillis()+MathUtils.random(asteroidInterval);
+			
+			asteroidOnScreen=false;
+			cometOnScreen=false;
 
 	}		
 

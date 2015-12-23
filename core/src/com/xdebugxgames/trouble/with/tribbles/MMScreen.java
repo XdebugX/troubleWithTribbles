@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 
 
 public class MMScreen implements Screen, InputProcessor {
@@ -16,8 +17,10 @@ public class MMScreen implements Screen, InputProcessor {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private boolean selectBlobOn,clicked,oneFrame,showCPC;
-	private int selectBlobI,selection;
+	private int selectBlobI,selection,p;
 	private static GlyphLayout gl;
+	private static Background b;
+	private static long pauseTime;
 
 
 
@@ -34,7 +37,22 @@ public class MMScreen implements Screen, InputProcessor {
 		 Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 		 
 		batch.begin();
-				batch.end();
+		
+		for (p=0;p<b.numStrips;p++) {
+			batch.draw(TH.strips[b.stripNum40[p]], 0, b.stripY[p], TH.stripsW[0], TH.stripsH[0]);
+			batch.draw(TH.strips[10+b.stripNum10[p]], 0, b.stripY[p]+TH.stripsH[0], TH.stripsW[10], TH.stripsH[10]);
+			batch.draw(TH.strips[20+b.stripNum20[p]], 0, b.stripY[p]+TH.stripsH[0]+TH.stripsH[10], TH.stripsW[20], TH.stripsH[20]);
+		}
+		
+		if (b.isPlanet) batch.draw(TH.texts[TH.ItxtPlanet], b.planetX, b.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
+		if (b.isSatt) batch.draw(TH.texts[TH.ItxtSatt], b.sattX, b.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
+		if (b.asteroidOnScreen) batch.draw(TH.texts[TH.ItxtAsteroids+b.asteroidType], b.asteroidX, b.asteroidY, TH.textsW[TH.ItxtAsteroids+b.asteroidType],TH.textsH[TH.ItxtAsteroids+b.asteroidType]);
+		if (b.cometOnScreen) {			
+		if (!b.cometDX) batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType]);								
+		else batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType]/2.0f, TH.textsH[TH.ItxtComets+b.cometType]/2.0f, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType],1.0f,1.0f,270.0f);
+		}
+		
+		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
 		if (clicked==true) {
@@ -57,8 +75,22 @@ public class MMScreen implements Screen, InputProcessor {
 		
 		}
 
-		
+		//////////////////do background stuff
+		if (!b.asteroidOnScreen) if (System.currentTimeMillis()>b.nextAsteroid) {
+			GV.spawnAsteroid(b);
+		}		
+		if (b.asteroidOnScreen) {
+			GV.moveAsteroid(b, delta);	
+		}
 
+		if (!b.cometOnScreen) if (System.currentTimeMillis()>b.nextComet) {
+			GV.spawnComet(b);
+		}		
+		if (b.cometOnScreen) {
+			GV.moveComet(b, delta);	
+		}
+
+		
 	}
 
 	@Override
@@ -100,10 +132,12 @@ public class MMScreen implements Screen, InputProcessor {
 	}
 	@Override
 	public void pause() {
+		pauseTime=System.currentTimeMillis();
 	}
 
 	@Override
 	public void resume() {
+		updateTimers (System.currentTimeMillis()-pauseTime);
 	}
 
 	@Override
@@ -169,6 +203,13 @@ public class MMScreen implements Screen, InputProcessor {
 	}	   
 	
 	private void doSizes() {
-	
+	b = new Background();
 	}
+	
+	private void updateTimers (long t) {
+		b.nextAsteroid+=t;
+		b.nextComet+=t;
+		b.nextUFO+=t;
+	}
+	
 }

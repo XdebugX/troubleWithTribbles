@@ -1,6 +1,7 @@
 package com.xdebugxgames.trouble.with.tribbles;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 
 public class GV {
 	public static float w,h,aspRatW,aspRatH,aspRatL;
@@ -10,6 +11,7 @@ public class GV {
 	public static boolean exit=false,firstMM=false;
 	public static boolean launched=false;
 	public static Options opts;
+	public static SavedGame s;
 	public static long lastAdShown=0;
 	public static final boolean isAmazon=false;
 	public static final boolean debugBuild=false;
@@ -24,4 +26,91 @@ public class GV {
 	  	  GV.aspRatH=GV.h/640.0f;
 	  	  if (GV.aspRatW<GV.aspRatH) GV.aspRatL=GV.aspRatW; else GV.aspRatL=GV.aspRatH;	
 	}
+	
+	public static void spawnAsteroid (Background b) {
+		b.asteroidHV=MathUtils.randomBoolean();
+		b.asteroidDX=MathUtils.randomBoolean();
+		b.asteroidDY=MathUtils.randomBoolean();
+		b.asteroidSpeed = MathUtils.random (GV.w/15.0f,GV.w/5.0f);
+		b.asteroidType = MathUtils.random (0,4);
+		
+		if (b.asteroidHV) {
+			b.asteroidY=MathUtils.random(GV.h);
+			if (b.asteroidDX) b.asteroidX=0.0f-TH.textsW[TH.ItxtAsteroids+b.asteroidType]; else b.asteroidX=GV.w;
+		}
+		else {
+			b.asteroidX=MathUtils.random(GV.w);
+			if (b.asteroidDY) b.asteroidY=0.0f-TH.textsH[TH.ItxtAsteroids+b.asteroidType]; else b.asteroidY=GV.h;
+		}
+		
+		b.asteroidOnScreen=true;
+		
+		
+	}
+	
+	public static void spawnComet (Background b) {
+		b.cometDX = MathUtils.randomBoolean();
+		b.cometSpeed = MathUtils.random(GV.w/15.0f,GV.w/5.0f);
+		b.cometType = MathUtils.random(0,3);
+		
+		if (b.cometDX) b.cometX=0.0f-TH.textsW[TH.ItxtComets+b.cometType]; else b.cometX=GV.w;
+		b.cometY=MathUtils.random(GV.h);
+		b.cometOnScreen=true;
+	
+	}
+	
+	public static void moveAsteroid (Background b, float delta) {
+		if (b.asteroidHV) {
+			if (b.asteroidDX) {
+				b.asteroidX+=b.asteroidSpeed*delta;
+				if (b.asteroidX>GV.w) {
+					b.asteroidOnScreen=false;
+					b.nextAsteroid = System.currentTimeMillis()+MathUtils.random(Background.asteroidInterval); 
+				}
+			} else {
+				b.asteroidX-=b.asteroidSpeed*delta;
+				if (b.asteroidX<0-TH.textsW[TH.ItxtAsteroids+b.asteroidType]) {
+					b.asteroidOnScreen=false;
+					b.nextAsteroid = System.currentTimeMillis()+MathUtils.random(Background.asteroidInterval); 						
+				}
+			}
+		} else {
+			if (b.asteroidDY) {
+				b.asteroidY+=b.asteroidSpeed*delta;
+				if (b.asteroidY>GV.h) {
+					b.asteroidOnScreen=false;
+					b.nextAsteroid = System.currentTimeMillis()+MathUtils.random(Background.asteroidInterval);
+				}
+				}
+			else{
+				b.asteroidY-=b.asteroidSpeed*delta;
+				if (b.asteroidY<0-TH.textsH[TH.ItxtAsteroids+b.asteroidType]) {
+					b.asteroidOnScreen=false;
+					b.nextAsteroid = System.currentTimeMillis()+MathUtils.random(Background.asteroidInterval);
+				}
+			}
+		}
+			
+	}
+	
+	public static void moveComet (Background b, float delta) {
+		if (b.cometDX) {
+			b.cometX+=b.cometSpeed*delta;
+			if (b.cometX>GV.w) {
+				b.cometOnScreen=false;
+				b.nextComet = System.currentTimeMillis()+MathUtils.random(Background.asteroidInterval);
+			}
+			}
+		else {
+			b.cometX-=b.cometSpeed*delta;
+			if (b.cometX<0-(TH.textsW[TH.ItxtComets+b.cometType])) {
+				b.cometOnScreen=false;
+				b.nextComet = System.currentTimeMillis()+MathUtils.random(Background.asteroidInterval);
+			}
+		}
+		
+		b.cometY+=b.cometSpeed*b.cometSlope[b.cometType]*delta;
+	
+	}
+	
 }

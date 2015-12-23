@@ -22,6 +22,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private ShapeRenderer sr;
 	private GlyphLayout gl;
 	private Background b;
+	private long pauseTime;
 
 	private static boolean doBack;
 
@@ -92,9 +93,7 @@ public class GameScreen implements Screen, InputProcessor {
 		instantiateArrays ();
 
 		sizes();
-		
-		b=new Background();
-		
+			
 	}
 
 	@Override
@@ -103,10 +102,12 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void pause() {
+		pauseTime=System.currentTimeMillis();
 	}
 
 	@Override
 	public void resume() {
+		updateTimers (System.currentTimeMillis()-pauseTime);
 	}
 
 	@Override
@@ -164,6 +165,10 @@ public class GameScreen implements Screen, InputProcessor {
 	}
 
 	private void sizes () {
+	
+		b=new Background();
+
+		
 	}
 	
 	private void instantiateArrays () {
@@ -177,5 +182,12 @@ public class GameScreen implements Screen, InputProcessor {
 	private float abs (float x) {
 	if (x>=0) return (x); else return (x*-1);
 	}
+	
+	private void updateTimers (long t) {
+		b.nextAsteroid+=t;
+		b.nextComet+=t;
+		b.nextUFO+=t;
+	}
+
 	
 }

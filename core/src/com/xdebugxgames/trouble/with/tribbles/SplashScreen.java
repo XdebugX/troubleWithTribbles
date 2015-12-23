@@ -40,7 +40,7 @@ public class SplashScreen implements Screen {
 	public void render(float delta) {
 		
 		if (done2) {
-			game.setScreen(game.gameScreen);
+			game.setScreen(game.mmScreen);
 		} else {
 
 		// update and draw stuff

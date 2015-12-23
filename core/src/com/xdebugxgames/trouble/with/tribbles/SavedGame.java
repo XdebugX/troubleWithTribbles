@@ -19,16 +19,11 @@ public class SavedGame implements Serializable {
 	
 	public Float futureUseFloats[];
 	
+	public int board [] [],level;
 	
-	public SavedGame () {
 	
-		futureUseBools = new boolean [1000];
-		futureUseInts = new int [1000];
-		futureUseStrings = new String [1000];
-		futureUseLongs = new Long [1000];
-		futureUseFloats = new Float [1000];
-		
-		
+	
+	public SavedGame () {		
 	}		
 
 }
