@@ -113,4 +113,13 @@ public class GV {
 	
 	}
 	
+	public static void doNewGame () {
+		s = new SavedGame();
+		s.board = new int [10] [20];
+	}
+	
+	public static void continueGame () {
+		
+	}
+	
 }

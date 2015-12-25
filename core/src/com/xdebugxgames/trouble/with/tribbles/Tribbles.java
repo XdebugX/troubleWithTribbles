@@ -32,6 +32,8 @@ public class Tribbles extends Game implements ApplicationListener {
 			saveOptions.save(GV.opts);
 		}
 		
+		GV.s=Save.loadGame();
+		
 		setScreen(splashScreen); 		
 	}
 
