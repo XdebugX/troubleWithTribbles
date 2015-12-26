@@ -25,6 +25,8 @@ public class GV {
 	 	  GV.aspRatW=GV.w/480.0f;
 	  	  GV.aspRatH=GV.h/640.0f;
 	  	  if (GV.aspRatW<GV.aspRatH) GV.aspRatL=GV.aspRatW; else GV.aspRatL=GV.aspRatH;	
+	  	 
+	  	  
 	}
 	
 	public static void spawnAsteroid (Background b) {
@@ -114,8 +116,57 @@ public class GV {
 	}
 	
 	public static void doNewGame () {
+		int p,t;
 		s = new SavedGame();
-		s.board = new int [10] [20];
+		s.boardW=8;
+		s.boardH=13;
+		s.numTribTypes=6;
+		s.board = new int [s.boardW] [s.boardH];
+		s.boardState = new int [s.boardW] [s.boardH];
+		s.boardStateTimer = new float [s.boardW] [s.boardH];
+		s.boardX = new float [s.boardW] [s.boardH];
+		s.boardY = new float [s.boardW] [s.boardH];
+		s.boardSpeed = new float [s.boardW] [s.boardH];
+		s.spawnRow = new int [s.boardW];
+		s.spawnRowState = new int [s.boardW];
+		s.spawnRowStateTimer = new float [s.boardW];
+
+		s.spawnInterval = 1000;
+		s.spawnRowTimer=System.currentTimeMillis()-s.spawnInterval;
+		s.spawnRowI=0;
+		for (p=0;p<s.boardW;p++) for (t=0;t<s.boardH;t++)  s.board[p][t]=s.numTribTypes+1;
+		for (p=0;p<s.boardW;p++) s.spawnRow[p] = s.numTribTypes+1;
+		s.neededForMatch=2;
+		
+		GV.s.poppedTribX = new float[s.boardW*s.boardH*3];
+		GV.s.poppedTribY = new float[s.boardW*s.boardH*3];
+		GV.s.poppedTribRotation = new float[s.boardW*s.boardH*3];
+		GV.s.poppedTribXD = new float[s.boardW*s.boardH*3];
+		GV.s.poppedTribYD = new float[s.boardW*s.boardH*3];
+		GV.s.poppedTRotationSpd = new float [s.boardW*s.boardH*3];
+		GV.s.poppedTribXDInc = new float[s.boardW*s.boardH*3];
+		GV.s.poppedTribYDInc = new float[s.boardW*s.boardH*3];
+		GV.s.poppedTRotationSpdInc = new float [s.boardW*s.boardH*3];
+
+		
+		GV.s.tribsToPopX = new int[s.boardW*s.boardH];
+		GV.s.tribsToPopY = new int[s.boardW*s.boardH];
+		GV.s.poppedTribType = new int[s.boardW*s.boardH*3];
+	
+		
+		
+		
+	}
+	
+	public static void level (int level) {
+		int p,t;
+		s.spawnInterval =1000 - (level * 7);
+		s.spawnRowTimer=System.currentTimeMillis()-s.spawnInterval;
+		s.spawnRowI=0;
+		for (p=0;p<s.boardW;p++) for (t=0;t<s.boardH;t++)  s.board[p][t]=s.numTribTypes+1;
+		for (p=0;p<s.boardW;p++) s.spawnRow[p] = s.numTribTypes+1;
+		
+		
 	}
 	
 	public static void continueGame () {

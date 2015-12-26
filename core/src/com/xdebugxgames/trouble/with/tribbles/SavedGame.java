@@ -19,7 +19,14 @@ public class SavedGame implements Serializable {
 	
 	public Float futureUseFloats[];
 	
-	public int board [] [],level;
+	public int board [] [],level,spawnRow[],boardW,boardH,numTribTypes,spawnRowI,spawnRowState[],boardState [] [],wTX,wTY,neededForMatch,tribsToPopX[],tribsToPopY[],numTribsToPop,numPoppedTribs,poppedTribType[];
+	
+	public long spawnRowTimer,spawnInterval;
+	
+	public float spawnRowStateTimer[],boardStateTimer[][],boardX[][],boardY[][],boardSpeed[][],poppedTribX[],poppedTribY[],poppedTribRotation[],poppedTRotationSpd[],poppedTribXD[],poppedTribYD[],poppedTRotationSpdInc[],poppedTribXDInc[],poppedTribYDInc[];
+	
+	public boolean tribTouched;
+	
 	
 	
 	

@@ -49,7 +49,7 @@ public class SplashScreen implements Screen {
 
 			if (!done) {
 
-				//TH.loadSounds();
+				TH.loadSounds();
 				TH.loadGraphics();
 				TH.sizes();
 					
@@ -87,6 +87,7 @@ public class SplashScreen implements Screen {
 
 	@Override
 	public void show() {
+		int p=0;
 		GV.doSizes();
 
 		camera = new OrthographicCamera(GV.w,GV.h);
@@ -112,8 +113,8 @@ public class SplashScreen implements Screen {
 		txtW=GV.w;
 		txtH=(GV.w/1024.0f) * 460.0f;
 		
-		//for (p=0;p<TH.numMusic;p++) TH.manager.load(TH.loopingMusicFN[p], Music.class);
-		//for (p=0;p<TH.numSfxs;p++) TH.manager.load(TH.sfxsFN[p],Sound.class);
+		for (p=0;p<TH.numMusic;p++) TH.manager.load(TH.loopingMusicFN[p], Music.class);
+		for (p=0;p<TH.numSfxs;p++) TH.manager.load(TH.sfxsFN[p],Sound.class);
 		TH.manager.load("menu.pack", TextureAtlas.class);
 		TH.manager.load("game.pack", TextureAtlas.class);
 		

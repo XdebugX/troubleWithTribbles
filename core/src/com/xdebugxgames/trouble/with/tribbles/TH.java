@@ -18,7 +18,7 @@ public class TH {
 	
 	 public static final int numTextures = 20, numAnimations = 32;	
 	 public static final int numMusic=0;
-	 public static final int numSfxs=0;
+	 public static final int numSfxs=19;
 	 public static TextureRegion texts[],strips[];
 	 public static float textsW[],textsH[],stripsW[],stripsH[],animW[],animH[];
 	 public static BitmapFont bf;
@@ -26,13 +26,15 @@ public class TH {
 	 public static Sound sfxs[];
 	 public static final int ImusicMM=0;
 	 public static final String loopingMusicFN[] = {""};
-	 public static final String sfxsFN[] = {};
+	 public static final String sfxsFN[] = {"woot_01.mp3","woot_02.mp3","woot_03.mp3","woot_04.mp3","woot_05.mp3","woot_06.mp3","woot_07.mp3","woot_08.mp3","woot_09.mp3","woot_10.mp3","woot_11.mp3","woot_12.mp3","woot_13.mp3","woot_14.mp3","woot_15.mp3","woot_16.mp3","woot_17.mp3","woot_18.mp3","woot_19.mp3"};
+	 public static final int IsfxWoots=0,IsfxNumWoots=19;
 	 public static final String animFN[] = {"BlueBall_blink","RedBall_blink","YellowBall_blink","OrangeBall_blink","GreenBall_blink","PurpleBall_blink","BrownBall_blink","BlackBall_blink",
 		 									"BlueBall_shuteyes","RedBall_shuteyes","YellowBall_shuteyes","OrangeBall_shuteyes","GreenBall_shuteyes","PurpleBall_shuteyes","BrownBall_shuteyes","BlackBall_shuteyes",
 		 									"BlueBall_spawn","RedBall_spawn","YellowBall_spawn","OrangeBall_spawn","GreenBall_spawn","PurpleBall_spawn","BrownBall_spawn","BlackBall_spawn",
 		 									"BlueBall_wiggle","RedBall_wiggle","YellowBall_wiggle","OrangeBall_wiggle","GreenBall_wiggle","PurpleBall_wiggle","BrownBall_wiggle","BlackBall_wiggle"};
-	 public static final int ItxtShip=0,ItxtTurret=1;
+	 
 	 public static final int ItxtAsteroids=0,ItxtComets=5,ItxtUfo=9,ItxtPlanet=10,ItxtSatt=11,ItxtBallsIdle=12;
+	 public static final int IanimBlink=0,IanimShutEyes=8,IanimSpawn=16,IanimWiggle=24;
 	 public static final String textsFN[]={"Asteroid1","Asteroid2","Asteroid3","Asteroid4","Asteroid5","Comet1","Comet2","Comet3","Comet4","ufo","planet","satt","BlueBall_idle","RedBall_idle","YellowBall_idle","OrangeBall_idle","GreenBall_idle","PurpleBall_idle","BrownBall_idle","BlackBall_idle"};
 	 public static final String stripsFN[]={"20","30","40"};
 	 public static final int menuItems[] ={};
