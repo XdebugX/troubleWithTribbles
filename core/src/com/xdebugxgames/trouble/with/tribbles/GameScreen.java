@@ -5,8 +5,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -21,13 +23,13 @@ public class GameScreen implements Screen, InputProcessor {
 	private static int p,t;
 	private ShapeRenderer sr;
 	private GlyphLayout gl;
+	private BitmapFontData bfD;
 	private Background b;
 	private long pauseTime;
-	private static int whichTribX,whichTribY;
-	private static float bX,bY,srX,srY,tribW,tribH,bW,bH,boardSpeedInc,startSpeed,poppedTribSpeed,poppedTribRotationSpeed;
+	private static int whichTribX,whichTribY,highestTrib,lastWootPlayed,woot,randomCardD;
+	private static float bX,bY,srX,srY,tribW,tribH,bW,bH,boardSpeedInc,startSpeed,poppedTribSpeed,poppedTribRotationSpeed,scoreBarH,scoreTextScale,levelW;
 
-	private static boolean doBack,tribbleTouched;
-
+	private static boolean doBack,tribbleTouched,isATrib,noTribs;
 
 
 	// constructor to keep a reference to the main Game class
@@ -61,8 +63,10 @@ public class GameScreen implements Screen, InputProcessor {
 
 		for (p=0;p<GV.s.spawnRowI;p++) {
 			if (GV.s.spawnRowState[p]==0) {
-				batch.draw(TH.Anims[TH.IanimSpawn+GV.s.spawnRow[p]].getKeyFrame(GV.s.spawnRowStateTimer[p] += delta, false ), srX+(p*tribW), srY, tribW, tribH);							
+				batch.setColor (1.0f,1.0f,1.0f,GV.s.spawnRowFade[p]);
+				batch.draw(TH.Anims[TH.IanimSpawn+GV.s.spawnRow[p]].getKeyFrame(GV.s.spawnRowStateTimer[p] += delta, false ), srX+(p*tribW), srY, tribW, tribH);
 			} 
+			batch.setColor (Color.WHITE);
 
 			if (GV.s.spawnRowState[p]==1) {
 				batch.draw(TH.texts[TH.ItxtBallsIdle+GV.s.spawnRow[p]], srX+(p*tribW), srY, tribW, tribH);											
@@ -72,7 +76,9 @@ public class GameScreen implements Screen, InputProcessor {
 		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) {
 			if (GV.s.board[p][t]<GV.s.numTribTypes) 
 				if (GV.s.boardState[p][t]==0) {
+					batch.setColor(1.0f,1.0f,1.0f,GV.s.spawnFade[p][t]);
 					batch.draw(TH.Anims[TH.IanimSpawn+GV.s.board[p][t]].getKeyFrame(GV.s.boardStateTimer[p][t] += delta, false), bX+GV.s.boardX[p][t], bY+GV.s.boardY[p][t], tribW, tribH);							
+					batch.setColor(Color.WHITE);
 				} 
 
 			if (GV.s.board[p][t]<GV.s.numTribTypes) 
@@ -84,14 +90,32 @@ public class GameScreen implements Screen, InputProcessor {
 				if (GV.s.boardState[p][t]==2) {
 					batch.draw(TH.Anims[TH.IanimBlink+GV.s.board[p][t]].getKeyFrame(GV.s.boardStateTimer[p][t] += delta, false), bX+GV.s.boardX[p][t], bY+GV.s.boardY[p][t], tribW, tribH);							
 				}
+
+			if (GV.s.board[p][t]<GV.s.numTribTypes) 
+				if (GV.s.boardState[p][t]==3) {
+					batch.draw(TH.Anims[TH.IanimWiggle+GV.s.board[p][t]].getKeyFrame(GV.s.boardStateTimer[p][t] += delta, false), bX+GV.s.boardX[p][t], bY+GV.s.boardY[p][t], tribW, tribH);							
+				}
+
+			if (GV.s.board[p][t]<GV.s.numTribTypes) 
+				if (GV.s.boardState[p][t]==4) {
+					batch.setColor(1.0f,1.0f,1.0f,GV.s.spawnFade[p][t]);
+					batch.draw(TH.Anims[TH.IanimShutEyes+GV.s.board[p][t]].getKeyFrame(GV.s.boardStateTimer[p][t] += delta, false), bX+GV.s.boardX[p][t], bY+GV.s.boardY[p][t], tribW, tribH);
+					batch.setColor(Color.WHITE);
+				}
+
+
 		}
 
 		for (p=0;p<GV.s.numPoppedTribs;p++) {
 			batch.draw(TH.texts[TH.ItxtBallsIdle+GV.s.poppedTribType[p]], GV.s.poppedTribX[p], GV.s.poppedTribY[p], tribW/2.0f, tribH/2.0f, tribW, tribH, 1.0f, 1.0f, GV.s.poppedTribRotation[p]);															
 		}
-
-
-
+		TH.bf.setColor(Color.GOLD);
+		TH.bf.draw(batch, "Score "+GV.s.score, 0, 0);
+	
+		
+		TH.bf.draw(batch, "Level "+GV.s.level, GV.w-levelW, 0);
+		
+		
 		batch.end();
 
 
@@ -129,8 +153,6 @@ public class GameScreen implements Screen, InputProcessor {
 			if (GV.s.spawnRowI==GV.s.boardW) {
 				GV.s.spawnRowI=0;
 
-
-
 				for (p=0;p<GV.s.boardW;p++) {
 					moveUp (p,GV.s.boardH-1);
 					GV.s.board[p][GV.s.boardH-1]=GV.s.spawnRow[p];
@@ -146,30 +168,34 @@ public class GameScreen implements Screen, InputProcessor {
 				GV.s.spawnRow[GV.s.spawnRowI]=MathUtils.random(0,GV.s.numTribTypes-1);
 				GV.s.spawnRowState[GV.s.spawnRowI]=0;
 				GV.s.spawnRowStateTimer[GV.s.spawnRowI]=0.0f;
-				GV.s.spawnRowI++;
+				GV.s.spawnRowFade[GV.s.spawnRowI] = 0.33f;
 				GV.s.spawnRowTimer=System.currentTimeMillis();
+				GV.s.spawnRowI++;
 			}
 		}
 
 		for (p=0;p<GV.s.spawnRowI;p++) {
 			if (GV.s.spawnRowState[p]==0) {
+				GV.s.spawnRowFade[p] = 0.33f+(((GV.s.spawnRowStateTimer[p]*1000.0f)/GV.s.spawnInterval)/1.5f);
 				if (GV.s.spawnRowStateTimer[p]*1000>=GV.s.spawnInterval) GV.s.spawnRowState[p]=1;
 			}
 		}
 
 
 		/////////////////board 
-		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==1) if (MathUtils.random(60*10)==0) {
+		//do random blinks
+		/*for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==1) if (MathUtils.random(60*10)==0) {
 			GV.s.boardState[p][t]=2;
 			GV.s.boardStateTimer[p][t]=0.0f;
 		}
-
+		*/
+		/// set state back to zero when blick animation is finished
 		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==2) if (TH.Anims[TH.IanimBlink+GV.s.board[p][t]].isAnimationFinished(GV.s.boardStateTimer[p][t])) {
 			GV.s.boardState[p][t]=1;
 			GV.s.boardStateTimer[p][t]=0.0f;
 		}
 
-
+		/// move the tribbles x or y location towards the spot they should be if they are not in the correct spot
 		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) {
 
 			if (GV.s.boardX[p][t]!=p*tribW || GV.s.boardY[p][t]!=t*tribH) {
@@ -182,13 +208,36 @@ public class GameScreen implements Screen, InputProcessor {
 				if (GV.s.boardY[p][t]<t*tribH) GV.s.boardY[p][t]+=GV.s.boardSpeed[p][t]*delta;
 				if (GV.s.boardY[p][t]>t*tribH) GV.s.boardY[p][t]-=GV.s.boardSpeed[p][t]*delta;
 
-				if (GV.s.boardY[p][t]>t*tribH-(2.0f*GV.aspRatL) && GV.s.boardY[p][t]<t*tribH+(2.0f*GV.aspRatL)) GV.s.boardY[p][t] = t*tribH;
-				if (GV.s.boardX[p][t]>p*tribW-(2.0f*GV.aspRatL) && GV.s.boardX[p][t]<p*tribW+(2.0f*GV.aspRatL)) GV.s.boardX[p][t] = p*tribW;
+				if (GV.s.boardY[p][t]>t*tribH-(10.0f*GV.aspRatL) && GV.s.boardY[p][t]<t*tribH+(10.0f*GV.aspRatL)) GV.s.boardY[p][t] = t*tribH;
+				if (GV.s.boardX[p][t]>p*tribW-(10.0f*GV.aspRatL) && GV.s.boardX[p][t]<p*tribW+(10.0f*GV.aspRatL)) GV.s.boardX[p][t] = p*tribW;
 
 
 
 			} else GV.s.boardSpeed[p][t]=startSpeed;
 
+		}
+
+		//check for gaps and move tribbles down if there is any below the tribbles
+		for (p=0;p<GV.s.boardW;p++) {
+			isATrib=false;
+			for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) {
+				highestTrib=t;
+				t=GV.s.boardH;
+				isATrib=true;
+			}
+
+			if (isATrib) if (highestTrib<GV.s.boardH-1) {
+				for (t=GV.s.boardH-1;t>highestTrib;t--) if (GV.s.board[p][t]>=GV.s.numTribTypes) moveDown (p,t,highestTrib);
+			}
+		}
+
+		//check for entire column of tribbles is empty and move colums to the left or right towards the center;
+		for (p=0;p<GV.s.boardW;p++) {
+			noTribs=true;
+			for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) noTribs=false;
+			if (noTribs) {
+				if (p>GV.s.boardW/2) moveColsLeft (p); else moveColsRight (p);
+			}
 		}
 
 
@@ -204,7 +253,13 @@ public class GameScreen implements Screen, InputProcessor {
 		if (GV.s.tribTouched) {
 			if (GV.s.board[GV.s.wTX][GV.s.wTY]<GV.s.numTribTypes) { 
 				if (findSurroundTribs (GV.s.wTX,GV.s.wTY)>=GV.s.neededForMatch) {
-					if (GV.opts.sfxOn) TH.sfxs[MathUtils.random(TH.IsfxWoots,TH.IsfxWoots+TH.IsfxNumWoots-1)].play();
+					if (GV.opts.sfxOn) {
+						do {
+							woot=MathUtils.random(TH.IsfxWoots,TH.IsfxWoots+TH.IsfxNumWoots-1);
+						} while (woot==lastWootPlayed);
+						TH.sfxs[woot].play();
+						lastWootPlayed=woot;
+					}
 					popTribs();
 				}
 			}
@@ -223,10 +278,7 @@ public class GameScreen implements Screen, InputProcessor {
 			GV.s.poppedTribY[p]+=GV.s.poppedTribYD[p]*delta;
 			GV.s.poppedTribRotation[p]+=GV.s.poppedTRotationSpd[p]*delta;
 
-
-
-
-			if (GV.s.poppedTribX[p]<0.0 || GV.s.poppedTribX[p]>GV.w || GV.s.poppedTribY[p]<0 || GV.s.poppedTribY[p]>GV.h) {
+			if (GV.s.poppedTribX[p]<0.0-tribW || GV.s.poppedTribX[p]>GV.w || GV.s.poppedTribY[p]<0-tribH || GV.s.poppedTribY[p]>GV.h) {
 				for (t=p;t<GV.s.numPoppedTribs-1;t++) {
 					GV.s.poppedTribRotation[t]=GV.s.poppedTribRotation[t+1];
 					GV.s.poppedTRotationSpd[t]=GV.s.poppedTRotationSpd[t+1];
@@ -245,6 +297,98 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 
 		}
+		
+		
+		
+		//set spawn tribbles to idle state when spawn animation finished
+		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==0) {
+			//set fade amount to animation timer
+			GV.s.spawnFade[p][t] = 0.33f + ((GV.s.boardStateTimer[p][t] / TH.Anims[TH.IanimSpawn+GV.s.board[p][t]].getAnimationDuration())/1.5f);
+			//reset animation if finished
+			if (TH.Anims[TH.IanimSpawn+GV.s.board[p][t]].isAnimationFinished(GV.s.boardStateTimer[p][t])) {
+				GV.s.boardState[p][t]=1;
+				GV.s.boardStateTimer[p][t]=0.0f;
+			}
+		}
+		//set tribbles to idle when shuteye animation finished
+		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==4) {
+			//set fade amount to animation timer
+			GV.s.spawnFade[p][t] = 1.0f - ((GV.s.boardStateTimer[p][t] / TH.Anims[TH.IanimShutEyes+GV.s.board[p][t]].getAnimationDuration())/1.5f);		
+			
+			if (TH.Anims[TH.IanimShutEyes+GV.s.board[p][t]].isAnimationFinished(GV.s.boardStateTimer[p][t])) {
+			GV.s.boardState[p][t]=1;
+			GV.s.boardStateTimer[p][t]=0.0f;
+		}
+		}
+
+
+		/////////////////////Tribbles Breed
+		//do random Wiggles
+		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==1) if (MathUtils.random((60*30)-GV.s.level)==0) {
+			GV.s.boardState[p][t]=3;
+			GV.s.boardStateTimer[p][t]=0.0f;
+		}
+		/// set state to shut eye when wiggle animation is finished and spawn a new tribble
+		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==3) if (TH.Anims[TH.IanimWiggle+GV.s.board[p][t]].isAnimationFinished(GV.s.boardStateTimer[p][t])) {
+			GV.s.boardState[p][t]=4;
+			GV.s.boardStateTimer[p][t]=0.0f;
+			GV.s.spawnFade[p][t]=1.0f;
+			
+			randomCardD=MathUtils.random(0,3);
+			if (randomCardD==0 && p==0) randomCardD=1;
+			if (randomCardD==1 && p==GV.s.boardW-1) randomCardD=0;
+			if (randomCardD==2 && t==0) randomCardD=3;
+			if (randomCardD==3 && t==GV.s.boardH-1) randomCardD=4;
+
+			if (randomCardD==0) {
+				moveUp (p-1,t);
+				GV.s.board[p-1][t]=MathUtils.random(0,GV.s.numTribTypes-1);
+				GV.s.boardStateTimer[p-1][t]=0.0f;
+				GV.s.boardState[p-1][t]=0;
+				GV.s.boardX[p-1][t]=(p*tribW);
+				GV.s.boardY[p-1][t]=(t*tribH);
+				GV.s.boardSpeed[p-1][t]=startSpeed;
+				GV.s.spawnFade [p-1] [t] = 0.33f;
+			}
+
+			if (randomCardD==1) {
+				moveUp (p+1,t);
+				GV.s.board[p+1][t]=MathUtils.random(0,GV.s.numTribTypes-1);
+				GV.s.boardStateTimer[p+1][t]=0.0f;
+				GV.s.boardState[p+1][t]=0;
+				GV.s.boardX[p+1][t]=(p*tribW);
+				GV.s.boardY[p+1][t]=(t*tribH);
+				GV.s.boardSpeed[p+1][t]=startSpeed;
+				GV.s.spawnFade [p+1] [t] = 0.33f;
+
+			}
+
+			if (randomCardD==2) {
+				moveUp (p,t-1);
+				GV.s.board[p][t-1]=MathUtils.random(0,GV.s.numTribTypes-1);
+				GV.s.boardStateTimer[p][t-1]=0.0f;
+				GV.s.boardState[p][t-1]=0;
+				GV.s.boardX[p][t-1]=(p*tribW);
+				GV.s.boardY[p][t-1]=(t*tribH);
+				GV.s.boardSpeed[p][t-1]=startSpeed;
+				GV.s.spawnFade [p] [t-1] = 0.33f;
+
+			}
+
+			if (randomCardD==3) {
+				moveUp (p,t);
+				GV.s.board[p][t]=MathUtils.random(0,GV.s.numTribTypes-1);
+				GV.s.boardStateTimer[p][t]=0.0f;
+				GV.s.boardState[p][t]=0;
+				GV.s.boardX[p][t]=(p*tribW);
+				GV.s.boardY[p][t]=(t*tribH);
+				GV.s.boardSpeed[p][t]=startSpeed;
+			}
+		}
+
+		
+		//level
+		if (GV.s.score>GV.s.levelThresholds[GV.s.level]) doLevel ();
 
 	}
 
@@ -274,8 +418,6 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.input.setCatchBackKey(true);
 
 		gl = new GlyphLayout ();
-
-		instantiateArrays ();
 
 		sizes();
 
@@ -333,11 +475,19 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchUp (int x, int y, int pointer, int button) {
 
+		int p,t;
+		for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (x>GV.s.boardX[p] [t] && x<GV.s.boardX[p] [t]+tribW && y>GV.s.boardY[p][t] && y<GV.s.boardY[p][t]+tribH) {
+			tribbleTouched=true;
+			whichTribX=p;
+			whichTribY=t;
+		}
+		/*
 		if (x>bX && x<bX+(tribW*GV.s.boardW) && y>bY && y<bY+(tribH*GV.s.boardH)) {
 			tribbleTouched=true;
 			whichTribX = (int) ((x-bX)/tribW);
 			whichTribY = (int) ((y-bY)/tribH);
 		}
+		 */
 		return true;
 
 	}
@@ -361,9 +511,31 @@ public class GameScreen implements Screen, InputProcessor {
 		int p=0;
 		b=new Background();
 
+		
+		scoreBarH = GV.h/40.0f;
+		
+		bfD = TH.bf.getData();
+
+		float z=0.1f,a=0.0f;
+		int breaker=0;
+
+		do {
+			z=z+0.1f;
+			bfD.setScale(z);
+			gl = new GlyphLayout (TH.bf,"Score: 10000");
+			a=gl.height;
+			breaker++;
+		} while (a<scoreBarH && breaker<1500);
+
+		scoreTextScale = z;
+		
+		gl = new GlyphLayout (TH.bf, "Level: 1000");
+		levelW=gl.width;
+		
+		float h=GV.h-scoreBarH;
 
 		tribW=GV.w/GV.s.boardW;
-		tribH=GV.h/(GV.s.boardH+1);
+		tribH=h/(GV.s.boardH+1);
 
 		if (tribW<tribH) tribH=tribW; else tribW=tribH;
 
@@ -371,7 +543,7 @@ public class GameScreen implements Screen, InputProcessor {
 		bH=tribH*GV.s.boardH;
 
 		bX=(GV.w-bW)/2.0f;
-		bY=(GV.h-(bH+tribH))/2.0f;
+		bY=(h-(bH+tribH))/2.0f;
 
 		boardSpeedInc = 5*GV.aspRatL;
 		startSpeed = 10*GV.aspRatL;
@@ -380,10 +552,20 @@ public class GameScreen implements Screen, InputProcessor {
 
 		srX=bX;
 		srY=bY+(tribH*(GV.s.boardH));
-		//for (p=0;p<GV.s.numTribTypes;p++) TH.Anims[TH.IanimSpawn+p]=new Animation ((GV.s.spawnInterval / (float) (TH.Anims[TH.IanimSpawn+p].getKeyFrames().length))/1000.0f,TH.Anims[TH.IanimSpawn+p].getKeyFrames());
-		for (p=0;p<GV.s.numTribTypes;p++) TH.Anims[TH.IanimSpawn+p].setFrameDuration((GV.s.spawnInterval / (float) (TH.Anims[TH.IanimSpawn+p].getKeyFrames().length))/1000.0f);
+
+		updateAnimSpeeds();
 
 
+	}
+
+	private void updateAnimSpeeds () {
+		int p;
+		for (p=0;p<GV.s.numTribTypes;p++) {
+			TH.Anims[TH.IanimSpawn+p].setFrameDuration((GV.s.spawnInterval / (float) (TH.Anims[TH.IanimSpawn+p].getKeyFrames().length))/1000.0f);
+			TH.Anims[TH.IanimWiggle+p].setFrameDuration((GV.s.wiggleInt / (float) (TH.Anims[TH.IanimWiggle+p].getKeyFrames().length))/1000.0f);
+			TH.Anims[TH.IanimShutEyes+p].setFrameDuration((GV.s.shutInt / (float) (TH.Anims[TH.IanimShutEyes+p].getKeyFrames().length))/1000.0f);
+
+		}
 	}
 
 	private void moveUp (int col, int row) {
@@ -395,8 +577,82 @@ public class GameScreen implements Screen, InputProcessor {
 			GV.s.boardX [col] [t] = GV.s.boardX [col] [t+1];
 			GV.s.boardY [col] [t] = GV.s.boardY [col] [t+1];	
 			GV.s.boardSpeed [col] [t] = GV.s.boardSpeed [col] [t+1];
+			GV.s.spawnFade [col] [t] = GV.s.spawnFade [col] [t+1];
+
 		}
 
+	}
+
+	private void moveDown (int p, int t, int highest) {
+		int i; 
+		for (i=t;i>highest;i--) {
+			GV.s.board[p] [i] = GV.s.board[p] [i-1];
+			GV.s.boardState[p] [i] = GV.s.boardState [p] [i-1];
+			GV.s.boardStateTimer [p] [i] = GV.s.boardStateTimer [p] [i-1];
+			GV.s.boardX [p] [i] = GV.s.boardX [p] [i-1];
+			GV.s.boardY [p] [i] = GV.s.boardY [p] [i-1];	
+			GV.s.boardSpeed [p] [i] = GV.s.boardSpeed [p] [i-1];
+			GV.s.spawnFade [p] [i] = GV.s.spawnFade [p] [i-1];
+
+		}
+
+		GV.s.board[p] [i] = GV.s.numTribTypes+1;
+		GV.s.boardState[p] [i] = 0;
+		GV.s.boardStateTimer [p] [i] = 0;
+		GV.s.boardX [p] [i] = 0;
+		GV.s.boardY [p] [i] = 0;	
+		GV.s.boardSpeed [p] [i] = 0;
+		GV.s.spawnFade [p] [i] = 0.33f;
+
+	}
+
+	private void moveColsLeft (int p) {
+		int t,i;
+		for (i=p;i<GV.s.boardW-1;i++) {
+			for (t=0;t<GV.s.boardH;t++) {
+				GV.s.board[i] [t] = GV.s.board[i+1] [t];
+				GV.s.boardState[i] [t] = GV.s.boardState [i+1] [t];
+				GV.s.boardStateTimer [i] [t] = GV.s.boardStateTimer [i+1] [t];
+				GV.s.boardX [i] [t] = GV.s.boardX [i+1] [t];
+				GV.s.boardY [i] [t] = GV.s.boardY [i+1] [t];	
+				GV.s.boardSpeed [i] [t] = GV.s.boardSpeed [i+1] [t];
+				GV.s.spawnFade [i] [t] = GV.s.spawnFade [i+1] [t];
+
+			}
+		}
+		for (t=0;t<GV.s.boardH;t++) {	
+			GV.s.board[i] [t] = GV.s.numTribTypes+1;
+			GV.s.boardState[i] [t] = 0;
+			GV.s.boardStateTimer [i] [t]=0;
+			GV.s.boardX [i] [t] = 0;
+			GV.s.boardY [i] [t] = 0;	
+			GV.s.boardSpeed [i] [t] = 0;
+			GV.s.spawnFade [i] [t] = 0.33f;
+		}		
+	}
+
+	private void moveColsRight (int p) {
+		int t,i;
+		for (i=p;i>0;i--) {
+			for (t=0;t<GV.s.boardH;t++) {
+				GV.s.board[i] [t] = GV.s.board[i-1] [t];
+				GV.s.boardState[i] [t] = GV.s.boardState [i-1] [t];
+				GV.s.boardStateTimer [i] [t] = GV.s.boardStateTimer [i-1] [t];
+				GV.s.boardX [i] [t] = GV.s.boardX [i-1] [t];
+				GV.s.boardY [i] [t] = GV.s.boardY [i-1] [t];	
+				GV.s.boardSpeed [i] [t] = GV.s.boardSpeed [i-1] [t];
+				GV.s.spawnFade [i] [t] = GV.s.spawnFade [i-1] [t];
+			}
+		}
+		for (t=0;t<GV.s.boardH;t++) {	
+			GV.s.board[i] [t] = GV.s.numTribTypes+1;
+			GV.s.boardState[i] [t] = 0;
+			GV.s.boardStateTimer [i] [t]=0;
+			GV.s.boardX [i] [t] = 0;
+			GV.s.boardY [i] [t] = 0;	
+			GV.s.boardSpeed [i] [t] = 0;
+			GV.s.spawnFade [i] [t] = 0;
+		}		
 	}
 
 	private int findSurroundTribs (int x, int y) {
@@ -409,7 +665,6 @@ public class GameScreen implements Screen, InputProcessor {
 		tribsFoundY[0]=y;
 		int numTribsFound=1;
 
-		int tribsSearched[] = new int [GV.s.boardW*GV.s.boardH];
 		int numTribsSearched=0;
 
 		int boardX,boardY,i;
@@ -487,6 +742,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 	private void popTribs () {
 		int p;
+		
+		GV.s.score += (GV.s.numTribsToPop*5)*GV.s.level;
+		
 		for (p=0;p<GV.s.numTribsToPop;p++) {
 			GV.s.poppedTribType[GV.s.numPoppedTribs+p]=GV.s.board[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]];
 			GV.s.poppedTribX[GV.s.numPoppedTribs+p]=GV.s.boardX[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]];
@@ -514,9 +772,15 @@ public class GameScreen implements Screen, InputProcessor {
 
 	}
 
-	private void instantiateArrays () {
+	private static void doLevel () {
+		int p,t;
+		GV.s.level ++;
+		GV.s.spawnInterval =1000 - (GV.s.level * 7);
+		GV.s.wiggleInt = 1500 - (GV.s.level * 14);
+		GV.s.shutInt = 500 - (GV.s.level * 3);
+		
 	}
-
+	
 
 	private int abs (int x) {
 		if (x>=0) return (x); else return (x*-1);

@@ -120,18 +120,26 @@ public class GV {
 		s = new SavedGame();
 		s.boardW=8;
 		s.boardH=13;
-		s.numTribTypes=6;
+		s.numTribTypes=4;
+		s.score=0;
+		s.level=1;
+		GV.s.levelThresholds = new long [1000];
+		for (p=0;p<1000;p++) GV.s.levelThresholds[p] = (long) (((p+1)*100) * (p+1));
 		s.board = new int [s.boardW] [s.boardH];
 		s.boardState = new int [s.boardW] [s.boardH];
 		s.boardStateTimer = new float [s.boardW] [s.boardH];
 		s.boardX = new float [s.boardW] [s.boardH];
 		s.boardY = new float [s.boardW] [s.boardH];
 		s.boardSpeed = new float [s.boardW] [s.boardH];
+		s.spawnFade = new float [s.boardW*3] [s.boardH*3];
 		s.spawnRow = new int [s.boardW];
 		s.spawnRowState = new int [s.boardW];
 		s.spawnRowStateTimer = new float [s.boardW];
+		s.spawnRowFade = new float [s.boardW];
 
 		s.spawnInterval = 1000;
+		s.wiggleInt = 1500;
+		s.shutInt = 500;
 		s.spawnRowTimer=System.currentTimeMillis()-s.spawnInterval;
 		s.spawnRowI=0;
 		for (p=0;p<s.boardW;p++) for (t=0;t<s.boardH;t++)  s.board[p][t]=s.numTribTypes+1;
@@ -155,21 +163,6 @@ public class GV {
 	
 		
 		
-		
-	}
-	
-	public static void level (int level) {
-		int p,t;
-		s.spawnInterval =1000 - (level * 7);
-		s.spawnRowTimer=System.currentTimeMillis()-s.spawnInterval;
-		s.spawnRowI=0;
-		for (p=0;p<s.boardW;p++) for (t=0;t<s.boardH;t++)  s.board[p][t]=s.numTribTypes+1;
-		for (p=0;p<s.boardW;p++) s.spawnRow[p] = s.numTribTypes+1;
-		
-		
-	}
-	
-	public static void continueGame () {
 		
 	}
 	
