@@ -16,6 +16,7 @@ public class GV {
 	public static final boolean isAmazon=false;
 	public static final boolean debugBuild=false;
 	public static int adH=0;
+	public static float tribW,tribH;
 	
 	public GV(){
 	}
@@ -117,7 +118,6 @@ public class GV {
 	
 	public static void doNewGame () {
 		int p,t;
-		s = new SavedGame();
 		s.boardW=8;
 		s.boardH=13;
 		s.numTribTypes=4;
@@ -140,6 +140,7 @@ public class GV {
 		s.spawnInterval = 1000;
 		s.wiggleInt = 1500;
 		s.shutInt = 500;
+		GV.s.transportInt = 1000;
 		s.spawnRowTimer=System.currentTimeMillis()-s.spawnInterval;
 		s.spawnRowI=0;
 		for (p=0;p<s.boardW;p++) for (t=0;t<s.boardH;t++)  s.board[p][t]=s.numTribTypes+1;
@@ -160,6 +161,25 @@ public class GV {
 		GV.s.tribsToPopX = new int[s.boardW*s.boardH];
 		GV.s.tribsToPopY = new int[s.boardW*s.boardH];
 		GV.s.poppedTribType = new int[s.boardW*s.boardH*3];
+		
+		if (GV.s.gameType==1) {
+			float scoreBarH = GV.h/40.0f;	
+			float h=GV.h-scoreBarH;
+
+			tribW=GV.w/GV.s.boardW;
+			tribH=h/(GV.s.boardH);
+
+			if (tribW<tribH) tribH=tribW; else tribW=tribH;
+	
+			for (p=0;p<GV.s.boardW;p++) {
+			GV.s.board[p][GV.s.boardH-1]=MathUtils.random(0,GV.s.numTribTypes-1);
+			GV.s.boardStateTimer[p][GV.s.boardH-1]=0.0f;
+			GV.s.boardState[p][GV.s.boardH-1]=1;
+			GV.s.boardX[p][GV.s.boardH-1]=(p*GV.tribW);
+			GV.s.boardY[p][GV.s.boardH-1]=((GV.s.boardH)*GV.tribH);
+			GV.s.boardSpeed[p][GV.s.boardH-1]=10*GV.aspRatL;
+		}
+		}
 	
 		
 		

@@ -18,15 +18,16 @@ public class MMScreen implements Screen, InputProcessor {
 	Tribbles game;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame;
-	private int selectBlobI,selection,p,numMenuStrings,numSure;
+	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame,selectGameType;
+	private int selectBlobI,selection,p,numMenuStrings,numSure,numGameType;
 	private static GlyphLayout gl;
 	private static BitmapFontData bfD;
 	private static Background b;
 	private static long pauseTime;
-	private static float menuTextScale,sureScale,menuStringsX[],menuStringsW[],menuStringsH[],menuStringsY[],sureStringsX[],sureStringsW[],sureStringsH[],sureStringsY[];;
+	private static float menuTextScale,sureScale,gameTypeScale,menuStringsX[],menuStringsW[],menuStringsH[],menuStringsY[],sureStringsX[],sureStringsW[],sureStringsH[],sureStringsY[],gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[];
 	private static final String [] menuStrings = {"New Game","Continue"};
 	private static final String [] sureStrings = {"You already have a saved game.","Starting a new game will overwrite your saved game.","Are you sure?","Yes","No"};
+	private static final String [] gameTypeStrings = {"Select gameplay type:","Endless","Clear the level"};
 
 
 
@@ -70,6 +71,17 @@ public class MMScreen implements Screen, InputProcessor {
 			}
 
 
+		} else if (selectGameType) {
+
+			bfD.setScale(gameTypeScale);
+
+			for (p=0;p<numGameType;p++) {
+					TH.bf.setColor(Color.GOLD);
+					if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); 
+					TH.bf.draw(batch, gameTypeStrings[p], gameTypeStringsX[p], gameTypeStringsY[p]);
+			}
+
+			
 		} else {
 
 			bfD.setScale(menuTextScale);
@@ -93,22 +105,37 @@ public class MMScreen implements Screen, InputProcessor {
 
 			if (areYouSure) {
 				if (selection==3) {
-					GV.doNewGame();
-					game.setScreen(game.gameScreen);
+					selectGameType=true;
+					areYouSure=false;
 				}
 
 				if (selection==4) {
 					areYouSure=false;
 				}
 
+			} else if (selectGameType) {
+				if (selection ==1) {
+					GV.s = new SavedGame();
+					GV.s.gameType=0;
+					GV.doNewGame();
+					selectGameType=false;
+					game.setScreen(game.gameScreen);
+				}
+				if (selection == 2) {
+					GV.s = new SavedGame();
+					GV.s.gameType=1;
+					GV.doNewGame();
+					selectGameType=false;
+					game.setScreen (game.gameScreen);
+				}
+				
 			} else {
 
 				if (selection==0) {
 					GV.s=Save.loadGame();
 					if (GV.s!=null) areYouSure=true; 
 					else {
-						GV.doNewGame();
-						game.setScreen(game.gameScreen);
+						selectGameType=true;
 					}
 				}
 
@@ -127,6 +154,7 @@ public class MMScreen implements Screen, InputProcessor {
 			Gdx.app.exit(); 
 		}
 
+		
 		if (showCPC) {
 			if (oneFrame) {
 				game.myRequestHandler.sendMsg("showCPAd");
@@ -134,6 +162,7 @@ public class MMScreen implements Screen, InputProcessor {
 			} else oneFrame=true;
 
 		}
+
 
 		//////////////////do background stuff
 		if (!b.asteroidOnScreen) if (System.currentTimeMillis()>b.nextAsteroid) {
@@ -177,15 +206,10 @@ public class MMScreen implements Screen, InputProcessor {
 
 
 		clicked=false;
-		if (GV.numIntsShown<5 && GV.firstMM) {
-			if (System.currentTimeMillis()-GV.lastAdShown>60*1000*3) game.myRequestHandler.sendMsg("showAd");
-		}
-		GV.firstMM=true;
-
-		game.myRequestHandler.sendMsg("showBanner");
 
 		areYouSure=false;
 		noSavedGame=false;
+		selectGameType=false;
 
 		sizes();
 
@@ -222,8 +246,12 @@ public class MMScreen implements Screen, InputProcessor {
 	public boolean keyUp (int keycode) {
 
 		if(keycode == Keys.BACK || keycode == Keys.ESCAPE){
+			
+			if (areYouSure) areYouSure=false; else 
+			if (selectGameType) selectGameType=false; else {
 			oneFrame=false;
 			showCPC=true;
+			}
 		}
 		return true;
 	}
@@ -249,7 +277,17 @@ public class MMScreen implements Screen, InputProcessor {
 
 		}
 
-		else {
+		else if (selectGameType) {
+
+			for (p=1;p<3;p++) {
+				if (x>gameTypeStringsX[p] && x<gameTypeStringsX[p]+gameTypeStringsW[p] && y>gameTypeStringsY[p] && y<gameTypeStringsY[p]+gameTypeStringsH[p]) {
+					selectBlobI=p;
+					selectBlobOn=true;
+				}
+			}
+
+			
+		} else {
 
 			for (p=0;p<numMenuStrings;p++) {
 				if (x>menuStringsX[p] && x<menuStringsX[p]+menuStringsW[p] && y>menuStringsY[p] && y<menuStringsY[p]+menuStringsH[p]) {
@@ -298,8 +336,17 @@ public class MMScreen implements Screen, InputProcessor {
 
 
 		}
-		else {
-
+		else if (selectGameType) {
+			
+			for (p=1;p<3;p++) {
+				if (x>gameTypeStringsX[p] && x<gameTypeStringsX[p]+gameTypeStringsW[p] && y>gameTypeStringsY[p] && y<gameTypeStringsY[p]+gameTypeStringsH[p] && selectBlobI==p) {
+					selectBlobOn=true;
+				}
+			}
+			
+			
+		} else {
+			
 			for (p=0;p<numMenuStrings;p++) {
 				if (x>menuStringsX[p] && x<menuStringsX[p]+menuStringsW[p] && y>menuStringsY[p] && y<menuStringsY[p]+menuStringsH[p] && selectBlobI==p) {
 					selectBlobOn=true;
@@ -349,16 +396,30 @@ public class MMScreen implements Screen, InputProcessor {
 			gl = new GlyphLayout (TH.bf,sureStrings[1]);
 			a=gl.width;
 			breaker++;
-		} while (a<GV.w*0.75f && breaker<1500);
+		} while (a<GV.w*0.90f && breaker<1500);
 
 		sureScale = z;
 
+		a=0;
+		z=0.1f;
+		breaker=0;
+
+		do {
+			z=z+0.1f;
+			bfD.setScale(z);
+			gl = new GlyphLayout (TH.bf,gameTypeStrings[0]);
+			a=gl.width;
+			breaker++;
+		} while (a<GV.w*0.90f && breaker<1500);
+
+		gameTypeScale = z;
 
 
-		bfD.setScale(menuTextScale);
+
 
 		numMenuStrings=menuStrings.length;
 		numSure = sureStrings.length;
+		numGameType = gameTypeStrings.length;
 		menuStringsX=new float [numMenuStrings];
 		menuStringsY=new float [numMenuStrings];
 		menuStringsW=new float [numMenuStrings];
@@ -369,11 +430,20 @@ public class MMScreen implements Screen, InputProcessor {
 		sureStringsW=new float [numSure];
 		sureStringsH=new float [numSure];
 
+		gameTypeStringsX=new float [numGameType];
+		gameTypeStringsY=new float [numGameType];
+		gameTypeStringsW=new float [numGameType];
+		gameTypeStringsH=new float [numGameType];
+
 
 		float logoH=0;/// change when you have a logo
 		float menuSpacing = (GV.h-logoH) / (numMenuStrings+1);
 		float sureSpacing = (GV.h-logoH) / (numSure+1);
+		float gameTypeSpacing = (GV.h-logoH) / (numGameType+1);
 
+		bfD.setScale(menuTextScale);
+
+		
 		for (p=0;p<numMenuStrings;p++) {
 			gl = new GlyphLayout (TH.bf,menuStrings[p]);
 			menuStringsX[p]=(GV.w-gl.width)/2.0f;
@@ -402,6 +472,17 @@ public class MMScreen implements Screen, InputProcessor {
 			sureStringsH[p]=gl.height;
 		}
 
+		bfD.setScale(gameTypeScale);
+
+		for (p=0;p<numGameType;p++) {
+			gl = new GlyphLayout (TH.bf,gameTypeStrings[p]);
+			gameTypeStringsX[p]=(GV.w-gl.width)/2.0f;
+			gameTypeStringsY[p]=gameTypeSpacing*(p+1);
+			gameTypeStringsW[p]=gl.width;
+			gameTypeStringsH[p]=gl.height;
+		}
+
+		
 
 	}
 
