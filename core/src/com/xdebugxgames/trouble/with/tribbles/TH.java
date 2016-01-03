@@ -17,17 +17,17 @@ public class TH {
 	private static Array <AtlasRegion>  aa;
 	
 	 public static final int numTextures = 16, numAnimations = 17;	
-	 public static final int numMusic=0;
-	 public static final int numSfxs=19;
+	 public static final int numMusic=1;
+	 public static final int numSfxs=20;
 	 public static TextureRegion texts[],strips[];
 	 public static float textsW[],textsH[],stripsW[],stripsH[],animW[],animH[];
 	 public static BitmapFont bf;
      public static Music loopingMusic[];
 	 public static Sound sfxs[];
 	 public static final int ImusicMM=0;
-	 public static final String loopingMusicFN[] = {""};
-	 public static final String sfxsFN[] = {"woot_01.mp3","woot_02.mp3","woot_03.mp3","woot_04.mp3","woot_05.mp3","woot_06.mp3","woot_07.mp3","woot_08.mp3","woot_09.mp3","woot_10.mp3","woot_11.mp3","woot_12.mp3","woot_13.mp3","woot_14.mp3","woot_15.mp3","woot_16.mp3","woot_17.mp3","woot_18.mp3","woot_19.mp3"};
-	 public static final int IsfxWoots=0,IsfxNumWoots=19;
+	 public static final String loopingMusicFN[] = {"builder.mp3"};
+	 public static final String sfxsFN[] = {"woot_01.mp3","woot_02.mp3","woot_03.mp3","woot_04.mp3","woot_05.mp3","woot_06.mp3","woot_07.mp3","woot_08.mp3","woot_09.mp3","woot_10.mp3","woot_11.mp3","woot_12.mp3","woot_13.mp3","woot_14.mp3","woot_15.mp3","woot_16.mp3","woot_17.mp3","woot_18.mp3","woot_19.mp3","transport.mp3"};
+	 public static final int IsfxWoots=0,IsfxNumWoots=19,IsfxTransport=19;
 	 public static final String animFN[] = {"BlueBall_blink","RedBall_blink","OrangeBall_blink","GreenBall_blink",
 		 									"BlueBall_spawn","RedBall_spawn","OrangeBall_spawn","GreenBall_spawn",
 		 									"BlueBall_wiggle","RedBall_wiggle","OrangeBall_wiggle","GreenBall_wiggle",
@@ -81,7 +81,10 @@ public class TH {
 		 	TH.loopingMusic = new Music [TH.numMusic];
 			TH.sfxs = new Sound [TH.numSfxs];
 
-			for (p=0;p<TH.numMusic;p++) TH.loopingMusic[p] = TH.manager.get(TH.loopingMusicFN[p],Music.class);
+			for (p=0;p<TH.numMusic;p++) {
+				TH.loopingMusic[p] = TH.manager.get(TH.loopingMusicFN[p],Music.class);
+				TH.loopingMusic[p].setLooping(true);
+			}
 			// Sound.class
 			for (p=0;p<TH.numSfxs;p++) TH.sfxs[p] = TH.manager.get(TH.sfxsFN[p],Sound.class);
 		

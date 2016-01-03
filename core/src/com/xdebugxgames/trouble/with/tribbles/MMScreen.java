@@ -18,16 +18,17 @@ public class MMScreen implements Screen, InputProcessor {
 	Tribbles game;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame,selectGameType;
+	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame,selectGameType,paused;
 	private int selectBlobI,selection,p,numMenuStrings,numSure,numGameType;
 	private static GlyphLayout gl;
 	private static BitmapFontData bfD;
-	private static Background b;
+	private Background b;
 	private static long pauseTime;
-	private static float menuTextScale,sureScale,gameTypeScale,menuStringsX[],menuStringsW[],menuStringsH[],menuStringsY[],sureStringsX[],sureStringsW[],sureStringsH[],sureStringsY[],gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[];
-	private static final String [] menuStrings = {"New Game","Continue"};
+	private static float menuTextScale,sureScale,gameTypeScale,menuStringsX[],menuStringsW[],menuStringsH[],menuStringsY[],sureStringsX[],sureStringsW[],sureStringsH[],sureStringsY[],gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[],pausedX,pausedY,pausedScale;
+	private static final String [] menuStrings = {"New Game","Continue","Options","Credits"};
 	private static final String [] sureStrings = {"You already have a saved game.","Starting a new game will overwrite your saved game.","Are you sure?","Yes","No"};
 	private static final String [] gameTypeStrings = {"Select gameplay type:","Endless","Clear the level"};
+	private static final String pausedString = "Paused";
 
 
 
@@ -58,6 +59,14 @@ public class MMScreen implements Screen, InputProcessor {
 			if (!b.cometDX) batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType]);								
 			else batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType]/2.0f, TH.textsH[TH.ItxtComets+b.cometType]/2.0f, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType],1.0f,1.0f,270.0f);
 		}
+		
+		if (paused) {
+
+			bfD.setScale(pausedScale);
+			TH.bf.setColor(Color.GOLD);
+			TH.bf.draw(batch, pausedString, pausedX, pausedY);
+
+		} else {
 
 		if (areYouSure) {
 
@@ -96,6 +105,8 @@ public class MMScreen implements Screen, InputProcessor {
 
 		}
 
+		}//not paused
+		
 		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
@@ -143,6 +154,15 @@ public class MMScreen implements Screen, InputProcessor {
 					GV.s=Save.loadGame();
 					game.setScreen(game.gameScreen);			
 				}
+				
+				if (selection==2) {
+					//options screen
+				}
+				
+				if (selection==3) {
+					game.setScreen (game.creditsScreen);
+				}
+				
 			}
 
 		}
@@ -163,6 +183,7 @@ public class MMScreen implements Screen, InputProcessor {
 
 		}
 
+		if (!paused) {
 
 		//////////////////do background stuff
 		if (!b.asteroidOnScreen) if (System.currentTimeMillis()>b.nextAsteroid) {
@@ -179,7 +200,8 @@ public class MMScreen implements Screen, InputProcessor {
 			GV.moveComet(b, delta);	
 		}
 
-
+		}//notpaused
+		
 	}
 
 	@Override
@@ -215,19 +237,26 @@ public class MMScreen implements Screen, InputProcessor {
 
 		GV.s=Save.loadGame();
 		if (GV.s==null) noSavedGame=true;
+		
+		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 	@Override
 	public void hide() {
+		for (int p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].pause();
 	}
 	@Override
 	public void pause() {
 		pauseTime=System.currentTimeMillis();
+		int p;
+		for (p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].pause();
+		paused=true;
 	}
 
 	@Override
 	public void resume() {
-		updateTimers (System.currentTimeMillis()-pauseTime);
+
+		
 	}
 
 	@Override
@@ -246,12 +275,14 @@ public class MMScreen implements Screen, InputProcessor {
 	public boolean keyUp (int keycode) {
 
 		if(keycode == Keys.BACK || keycode == Keys.ESCAPE){
-			
+			if (paused) resumeGame(); else {
 			if (areYouSure) areYouSure=false; else 
 			if (selectGameType) selectGameType=false; else {
 			oneFrame=false;
 			showCPC=true;
 			}
+		}//not paused
+			
 		}
 		return true;
 	}
@@ -267,6 +298,7 @@ public class MMScreen implements Screen, InputProcessor {
 		selectBlobOn=false;
 		selectBlobI=numMenuStrings+10;
 
+		if (!paused) {
 		if (areYouSure) {
 			for (p=3;p<5;p++) {
 				if (x>sureStringsX[p] && x<sureStringsX[p]+sureStringsW[p] && y>sureStringsY[p] && y<sureStringsY[p]+sureStringsH[p]) {
@@ -296,6 +328,8 @@ public class MMScreen implements Screen, InputProcessor {
 				}
 			}
 		}
+		
+		}//not paused
 
 		return true;
 	}
@@ -303,6 +337,9 @@ public class MMScreen implements Screen, InputProcessor {
 	@Override
 	public boolean touchUp (int x, int y, int pointer, int button) {
 
+		if (paused) resumeGame (); else {
+
+		
 		if (areYouSure) {
 			if (selectBlobOn) {
 				selection=selectBlobI;
@@ -318,12 +355,16 @@ public class MMScreen implements Screen, InputProcessor {
 			}
 
 		}
+		
+		}//notpaused
+		
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
 
+		if (!paused) {
 		selectBlobOn=false;
 
 		if (areYouSure) {
@@ -354,6 +395,8 @@ public class MMScreen implements Screen, InputProcessor {
 			}
 		}
 
+		}
+		
 		return true;
 	}
 
@@ -372,9 +415,12 @@ public class MMScreen implements Screen, InputProcessor {
 
 		bfD = TH.bf.getData();
 
-		float a=0;
-		float z=0.1f;
-		int breaker=0;
+		float a,z;
+		int breaker;
+		
+		a=0.0f;
+		z=0.1f;
+		breaker=0;
 
 		do {
 			z=z+0.1f;
@@ -413,6 +459,24 @@ public class MMScreen implements Screen, InputProcessor {
 		} while (a<GV.w*0.90f && breaker<1500);
 
 		gameTypeScale = z;
+		
+		z=0.1f;
+		a=0.0f;
+		breaker=0;
+
+		do {
+			z=z+0.1f;
+			bfD.setScale(z);
+			gl = new GlyphLayout (TH.bf,pausedString);
+			a=gl.width;
+			breaker++;
+		} while (a<GV.w/3 && breaker<1500);
+
+		pausedScale = z;
+
+		pausedX=(GV.w-gl.width)/2.0f;
+		pausedY=(GV.h-gl.height)/2.0f;
+
 
 
 
@@ -485,6 +549,13 @@ public class MMScreen implements Screen, InputProcessor {
 		
 
 	}
+	
+	private void resumeGame () {
+		updateTimers (System.currentTimeMillis()-pauseTime);
+		paused=false;
+		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+	}
+
 
 	private void updateTimers (long t) {
 		b.nextAsteroid+=t;

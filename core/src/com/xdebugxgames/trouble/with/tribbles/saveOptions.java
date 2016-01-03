@@ -39,7 +39,7 @@ public class saveOptions {
 		return (s);
 	}
 
-	 public static byte[] serialize(Object obj) {
+	public static byte[] serialize(Object obj) {
  		try {
 	        ByteArrayOutputStream b = new ByteArrayOutputStream();
 	        ObjectOutputStream o = new ObjectOutputStream(b);
@@ -50,5 +50,4 @@ public class saveOptions {
  			return null;
  		}
 	}
-	
 }

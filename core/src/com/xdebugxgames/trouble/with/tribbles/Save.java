@@ -14,7 +14,6 @@ import com.badlogic.gdx.utils.Json;
 public class Save {
 
 	public static void saveGame (Tribbles trib, SavedGame s) {
-		
 		trib.myRequestHandler.saveGame(serialize (s));
 		if (Gdx.files.isLocalStorageAvailable()) {
 			
@@ -28,6 +27,7 @@ public class Save {
 		}//local files available
 	}
 	public static SavedGame loadGame () {
+	
 		SavedGame s=null;
 		if (Gdx.files.isLocalStorageAvailable()) {
 			Json json = new Json();			
@@ -39,11 +39,8 @@ public class Save {
 			s = (SavedGame) json.fromJson( SavedGame.class, gameData );
 			} catch (Exception e) {};
 		}//local files available;
-		
 		return (s);
 	}
-	
-	
     public static byte[] serialize(Object obj) {
     		try {
 	        ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -55,5 +52,4 @@ public class Save {
     			return null;
     		}
 	}
-   
 }

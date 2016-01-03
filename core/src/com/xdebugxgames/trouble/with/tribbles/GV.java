@@ -124,7 +124,7 @@ public class GV {
 		s.score=0;
 		s.level=1;
 		GV.s.levelThresholds = new long [1000];
-		for (p=0;p<1000;p++) GV.s.levelThresholds[p] = (long) (((p+1)*100) * (p+1));
+		for (p=0;p<1000;p++) GV.s.levelThresholds[p] = (long) ((p+1)*100) * (p*3);
 		s.board = new int [s.boardW] [s.boardH];
 		s.boardState = new int [s.boardW] [s.boardH];
 		s.boardStateTimer = new float [s.boardW] [s.boardH];
@@ -140,7 +140,7 @@ public class GV {
 		s.spawnInterval = 1000;
 		s.wiggleInt = 1500;
 		s.shutInt = 500;
-		GV.s.transportInt = 1000;
+		GV.s.transportInt = 1350;
 		s.spawnRowTimer=System.currentTimeMillis()-s.spawnInterval;
 		s.spawnRowI=0;
 		for (p=0;p<s.boardW;p++) for (t=0;t<s.boardH;t++)  s.board[p][t]=s.numTribTypes+1;

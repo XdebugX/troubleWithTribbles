@@ -12,8 +12,8 @@ public class DesktopLauncher implements IActivityRequestHandler {
 	
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width=608;
-		config.height=1080;
+		config.width=608;//750
+		config.height=1080;//1334
 		config.title="Trouble with Tribbles";
 		if (application == null) {
 			application = new DesktopLauncher();
