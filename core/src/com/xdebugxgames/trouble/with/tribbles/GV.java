@@ -125,6 +125,13 @@ public class GV {
 	
 	public static void doNewGame () {
 		int p,t;
+		
+		GV.s.futureUseBools = new boolean [1000];
+		GV.s.futureUseFloats = new float [1000];
+		GV.s.futureUseInts = new int [1000];
+		GV.s.futureUseLongs = new long [1000];
+		GV.s.futureUseStrings = new String [1000];
+		
 		s.boardW=8;
 		s.boardH=13;
 		s.numTribTypes=4;

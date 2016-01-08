@@ -542,7 +542,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 		sizes();
 
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 	@Override
@@ -1111,7 +1111,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private void resumeGame () {
 		updateTimers (System.currentTimeMillis()-GV.s.pauseTime);
 		GV.s.paused=false;
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 	private void updateTimers (long t) {

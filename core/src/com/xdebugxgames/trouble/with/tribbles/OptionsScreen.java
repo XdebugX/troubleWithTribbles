@@ -100,15 +100,16 @@ public class OptionsScreen implements Screen, InputProcessor {
 			}
 			
 			if (selection==2) doBack=true;
-			
+			if (selection==1 || selection==0) {
 			if (GV.opts.sfxOn) optionsText[0]="Sound: ON"; else optionsText[0]="Sound: OFF";
 			if (GV.opts.musicOn) {
 				optionsText[1]="Music: ON";
-				TH.loopingMusic[TH.ImusicMM].play();
+				if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 			}
 			else {
-				for (p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].pause();				
+				for (p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].stop();				
 				optionsText[1]="Music: OFF";
+			}
 			}
 
 
@@ -146,7 +147,7 @@ public class OptionsScreen implements Screen, InputProcessor {
 		clicked=false;
 		doBack=false;
 
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 	@Override
@@ -330,7 +331,7 @@ public class OptionsScreen implements Screen, InputProcessor {
 	private void resumeGame () {
 		updateTimers (System.currentTimeMillis()-pauseTime);
 		paused=false;
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 

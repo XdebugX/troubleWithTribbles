@@ -119,7 +119,7 @@ public class CreditsScreen implements Screen, InputProcessor {
 		sizes();		
 		clicked=false;
 		
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public class CreditsScreen implements Screen, InputProcessor {
 	private void resumeGame () {
 		updateTimers (System.currentTimeMillis()-pauseTime);
 		paused=false;
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 

@@ -15,9 +15,9 @@ public class SavedGame implements Serializable {
 	
 	public String futureUseStrings[];
 	
-	public Long futureUseLongs[];
+	public long futureUseLongs[];
 	
-	public Float futureUseFloats[];
+	public float futureUseFloats[];
 	
 	public int board [] [],level,spawnRow[],boardW,boardH,numTribTypes,spawnRowI,spawnRowState[],boardState [] [],wTX,wTY,neededForMatch,tribsToPopX[],tribsToPopY[],numTribsToPop,numPoppedTribs,poppedTribType[],gameType,numLaser;
 	

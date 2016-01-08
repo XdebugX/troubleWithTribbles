@@ -257,7 +257,7 @@ public class MMScreen implements Screen, InputProcessor {
 		GV.s=Save.loadGame();
 		if (GV.s==null) noSavedGame=true;
 		
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 	@Override
@@ -574,7 +574,7 @@ public class MMScreen implements Screen, InputProcessor {
 	private void resumeGame () {
 		updateTimers (System.currentTimeMillis()-pauseTime);
 		paused=false;
-		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
+		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
 
