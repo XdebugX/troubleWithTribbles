@@ -24,7 +24,7 @@ public class MMScreen implements Screen, InputProcessor {
 	private static BitmapFontData bfD;
 	private Background b;
 	private static long pauseTime;
-	private static float menuTextScale,sureScale,gameTypeScale,menuStringsX[],menuStringsW[],menuStringsH[],menuStringsY[],sureStringsX[],sureStringsW[],sureStringsH[],sureStringsY[],gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[],pausedX,pausedY,pausedScale;
+	private static float menuTextScale,sureScale,gameTypeScale,menuStringsX[],menuStringsW[],menuStringsH[],menuStringsY[],sureStringsX[],sureStringsW[],sureStringsH[],sureStringsY[],gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[],pausedX,pausedY,pausedScale,pausedW,pausedH;
 	private static final String [] menuStrings = {"New Game","Continue","Options","Credits"};
 	private static final String [] sureStrings = {"You already have a saved game.","Starting a new game will overwrite your saved game.","Are you sure?","Yes","No"};
 	private static final String [] gameTypeStrings = {"Select gameplay type:","Endless","Clear the level"};
@@ -62,6 +62,10 @@ public class MMScreen implements Screen, InputProcessor {
 		
 		if (paused) {
 
+			batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
+			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, pausedW, pausedH);
+			batch.setColor(Color.WHITE);
+			
 			bfD.setScale(pausedScale);
 			TH.bf.setColor(Color.GOLD);
 			TH.bf.draw(batch, pausedString, pausedX, pausedY);
@@ -72,6 +76,10 @@ public class MMScreen implements Screen, InputProcessor {
 
 			for (p=0;p<numSure;p++) {
 
+				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
+				batch.draw(TH.texts[TH.ItxtPixel], sureStringsX[p], sureStringsY[p], sureStringsW[p], sureStringsH[p]);
+				batch.setColor(Color.WHITE);
+				
 				if (p<2) bfD.setScale(sureScale); else bfD.setScale (menuTextScale);
 
 				TH.bf.setColor(Color.GOLD);
@@ -85,6 +93,12 @@ public class MMScreen implements Screen, InputProcessor {
 			bfD.setScale(gameTypeScale);
 
 			for (p=0;p<numGameType;p++) {
+				
+				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
+				batch.draw(TH.texts[TH.ItxtPixel], gameTypeStringsX[p], gameTypeStringsY[p], gameTypeStringsW[p], gameTypeStringsH[p]);
+				batch.setColor(Color.WHITE);
+
+				
 					TH.bf.setColor(Color.GOLD);
 					if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); 
 					TH.bf.draw(batch, gameTypeStrings[p], gameTypeStringsX[p], gameTypeStringsY[p]);
@@ -97,6 +111,11 @@ public class MMScreen implements Screen, InputProcessor {
 
 			for (p=0;p<numMenuStrings;p++) {
 				if (!(p==1 && noSavedGame)) {
+					
+					batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
+					batch.draw(TH.texts[TH.ItxtPixel], menuStringsX[p], menuStringsY[p], menuStringsW[p], menuStringsH[p]);
+					batch.setColor(Color.WHITE);
+					
 					TH.bf.setColor(Color.GOLD);
 					if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); 
 					TH.bf.draw(batch, menuStrings[p], menuStringsX[p], menuStringsY[p]);
@@ -156,7 +175,7 @@ public class MMScreen implements Screen, InputProcessor {
 				}
 				
 				if (selection==2) {
-					//options screen
+					game.setScreen (game.optionsScreen);
 				}
 				
 				if (selection==3) {
@@ -442,7 +461,7 @@ public class MMScreen implements Screen, InputProcessor {
 			gl = new GlyphLayout (TH.bf,sureStrings[1]);
 			a=gl.width;
 			breaker++;
-		} while (a<GV.w*0.90f && breaker<1500);
+		} while (a<GV.w*0.85f && breaker<1500);
 
 		sureScale = z;
 
@@ -476,6 +495,8 @@ public class MMScreen implements Screen, InputProcessor {
 
 		pausedX=(GV.w-gl.width)/2.0f;
 		pausedY=(GV.h-gl.height)/2.0f;
+		pausedW=gl.width;
+		pausedH=bfD.lineHeight;
 
 
 
@@ -513,7 +534,7 @@ public class MMScreen implements Screen, InputProcessor {
 			menuStringsX[p]=(GV.w-gl.width)/2.0f;
 			menuStringsY[p]=menuSpacing*(p+1);
 			menuStringsW[p]=gl.width;
-			menuStringsH[p]=gl.height;
+			menuStringsH[p]=bfD.lineHeight;
 		}
 
 		bfD.setScale(sureScale);
@@ -523,7 +544,7 @@ public class MMScreen implements Screen, InputProcessor {
 			sureStringsX[p]=(GV.w-gl.width)/2.0f;
 			sureStringsY[p]=sureSpacing*(p+1);
 			sureStringsW[p]=gl.width;
-			sureStringsH[p]=gl.height;
+			sureStringsH[p]=bfD.lineHeight;
 		}
 
 		bfD.setScale(menuTextScale);
@@ -533,7 +554,7 @@ public class MMScreen implements Screen, InputProcessor {
 			sureStringsX[p]=(GV.w-gl.width)/2.0f;
 			sureStringsY[p]=sureSpacing*(p+1);
 			sureStringsW[p]=gl.width;
-			sureStringsH[p]=gl.height;
+			sureStringsH[p]=bfD.lineHeight;
 		}
 
 		bfD.setScale(gameTypeScale);
@@ -543,7 +564,7 @@ public class MMScreen implements Screen, InputProcessor {
 			gameTypeStringsX[p]=(GV.w-gl.width)/2.0f;
 			gameTypeStringsY[p]=gameTypeSpacing*(p+1);
 			gameTypeStringsW[p]=gl.width;
-			gameTypeStringsH[p]=gl.height;
+			gameTypeStringsH[p]=bfD.lineHeight;
 		}
 
 		

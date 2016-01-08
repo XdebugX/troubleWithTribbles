@@ -1,9 +1,5 @@
 package com.xdebugxgames.trouble.with.tribbles;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Base64Coder;
@@ -37,17 +33,5 @@ public class saveOptions {
 			} catch (Exception e) {};
 		}//local files available;
 		return (s);
-	}
-
-	public static byte[] serialize(Object obj) {
- 		try {
-	        ByteArrayOutputStream b = new ByteArrayOutputStream();
-	        ObjectOutputStream o = new ObjectOutputStream(b);
-	        o.writeObject(obj);
-	        return b.toByteArray();
- 		} catch (IOException e) {
- 			System.out.println ("IOException "+e);
- 			return null;
- 		}
 	}
 }

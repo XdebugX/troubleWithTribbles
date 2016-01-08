@@ -12,27 +12,28 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-public class CreditsScreen implements Screen, InputProcessor {
+public class OptionsScreen implements Screen, InputProcessor {
 
 	Tribbles game;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private boolean clicked,paused;
-	
+
 	private static GlyphLayout glphLay;
 	private static BitmapFontData bfD;
 
 	private Background b;
-	private static float fntH,creditTextScale,textX[],textY[],textH[],textW[],pausedScale,pausedX,pausedY,pausedW,pausedH;
-	private static int numTexts,p;
+	private static float fntH,optionsTextScale,textX[],textY[],textH[],textW[],pausedScale,pausedX,pausedY,pausedW,pausedH;
+	private static int numTexts,p,selectBlobI,selection;
 	private static long pauseTime;
 	private static final String pausedString = "Paused";
-	private static final String creditText[] = {"Music:","\"Pamgaea\" Kevin MacLeod (incompetech.com)","Licensed under Creative Commons: By Attribution 3.0","http://creativecommons.org/licenses/by/3.0/","Trouble With Tribbles","Tribbles are born pregnant!","We must get them off the ship!","Luckily there is a Klingon ship nearby.","In order to use the transporter efficiently,","the captain has ordered us to only beam","them when 2 or more are together.","Copyright 2016 XdebugX Games"};
-	
+	private static final String optionsText[] = {"Sound: ON","Music: ON","Done."};
+	private static boolean doBack,selectBlobOn;
+
 
 
 	// constructor to keep a reference to the main Game class
-	public CreditsScreen (Tribbles game) {
+	public OptionsScreen (Tribbles game) {
 		this.game = game;
 	}
 
@@ -40,56 +41,81 @@ public class CreditsScreen implements Screen, InputProcessor {
 	public void render(float delta) {
 		if (delta>0.033333f) delta = 0.033333f;
 		////////////////////////////////////////////// Render //////////////////////////////////////////////////////////		
-		 Gdx.gl.glClearColor( 0, 0, 0, 1 );
-		 Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
-	
+		Gdx.gl.glClearColor( 0, 0, 0, 1 );
+		Gdx.gl.glClear( GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT );
 
-			batch.begin();
+
+		batch.begin();
+		batch.setColor(Color.WHITE);
+		for (p=0;p<b.numStrips;p++) {
+			batch.draw(TH.strips[b.stripNum40[p]], 0, b.stripY[p], TH.stripsW[0], TH.stripsH[0]);
+			batch.draw(TH.strips[10+b.stripNum10[p]], 0, b.stripY[p]+TH.stripsH[0], TH.stripsW[10], TH.stripsH[10]);
+			batch.draw(TH.strips[20+b.stripNum20[p]], 0, b.stripY[p]+TH.stripsH[0]+TH.stripsH[10], TH.stripsW[20], TH.stripsH[20]);
+		}
+
+		if (b.isPlanet) batch.draw(TH.texts[TH.ItxtPlanet], b.planetX, b.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
+		if (b.isSatt) batch.draw(TH.texts[TH.ItxtSatt], b.sattX, b.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
+		if (b.asteroidOnScreen) batch.draw(TH.texts[TH.ItxtAsteroids+b.asteroidType], b.asteroidX, b.asteroidY, TH.textsW[TH.ItxtAsteroids+b.asteroidType],TH.textsH[TH.ItxtAsteroids+b.asteroidType]);
+		if (b.cometOnScreen) {			
+			if (!b.cometDX) batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType]);								
+			else batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType]/2.0f, TH.textsH[TH.ItxtComets+b.cometType]/2.0f, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType],1.0f,1.0f,270.0f);
+		}
+
+		if (paused) {
+			
+			batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
+			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, pausedW, pausedH);
 			batch.setColor(Color.WHITE);
-			for (p=0;p<b.numStrips;p++) {
-				batch.draw(TH.strips[b.stripNum40[p]], 0, b.stripY[p], TH.stripsW[0], TH.stripsH[0]);
-				batch.draw(TH.strips[10+b.stripNum10[p]], 0, b.stripY[p]+TH.stripsH[0], TH.stripsW[10], TH.stripsH[10]);
-				batch.draw(TH.strips[20+b.stripNum20[p]], 0, b.stripY[p]+TH.stripsH[0]+TH.stripsH[10], TH.stripsW[20], TH.stripsH[20]);
-			}
 
-			if (b.isPlanet) batch.draw(TH.texts[TH.ItxtPlanet], b.planetX, b.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
-			if (b.isSatt) batch.draw(TH.texts[TH.ItxtSatt], b.sattX, b.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
-			if (b.asteroidOnScreen) batch.draw(TH.texts[TH.ItxtAsteroids+b.asteroidType], b.asteroidX, b.asteroidY, TH.textsW[TH.ItxtAsteroids+b.asteroidType],TH.textsH[TH.ItxtAsteroids+b.asteroidType]);
-			if (b.cometOnScreen) {			
-				if (!b.cometDX) batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType]);								
-				else batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType]/2.0f, TH.textsH[TH.ItxtComets+b.cometType]/2.0f, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType],1.0f,1.0f,270.0f);
-			}
-			
-			if (paused) {
-				
-				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-				batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, pausedW, pausedH);
-				batch.setColor(Color.WHITE);
-				
-				bfD.setScale(pausedScale);
-				TH.bf.setColor(Color.GOLD);
-				TH.bf.draw(batch, pausedString, pausedX, pausedY);
-
-			} else {
-			
+			bfD.setScale(pausedScale);
 			TH.bf.setColor(Color.GOLD);
-			
-			bfD.setScale(creditTextScale);
+			TH.bf.draw(batch, pausedString, pausedX, pausedY);
+
+		} else {
+			bfD.setScale(optionsTextScale);
 
 			for (p=0;p<numTexts;p++) {
 				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
 				batch.draw(TH.texts[TH.ItxtPixel], textX[p], textY[p], textW[p],textH[p]);
-				batch.setColor(Color.WHITE);
-				TH.bf.draw(batch, creditText[p], textX[p], textY[p]);
+				batch.setColor (Color.WHITE);
+				
+				if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); else TH.bf.setColor(Color.GOLD);
+				TH.bf.draw(batch, optionsText[p], textX[p], textY[p]);
 			}
-			batch.setColor (Color.WHITE);
-			}
-		 
+		}
+
 		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
-		if (clicked==true) {
+		if (clicked) {
 			clicked=false;
+			if (selection==0) {
+				GV.opts.sfxOn=!GV.opts.sfxOn;
+				saveOptions.save(GV.opts);
+			}
+			
+			if (selection==1) {
+				GV.opts.musicOn=!GV.opts.musicOn;
+				saveOptions.save(GV.opts);
+			}
+			
+			if (selection==2) doBack=true;
+			
+			if (GV.opts.sfxOn) optionsText[0]="Sound: ON"; else optionsText[0]="Sound: OFF";
+			if (GV.opts.musicOn) {
+				optionsText[1]="Music: ON";
+				TH.loopingMusic[TH.ImusicMM].play();
+			}
+			else {
+				for (p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].pause();				
+				optionsText[1]="Music: OFF";
+			}
+
+
+		}
+
+		if (doBack) {
+			doBack=false;
 			game.setScreen(game.mmScreen);
 		}
 	}
@@ -118,7 +144,8 @@ public class CreditsScreen implements Screen, InputProcessor {
 
 		sizes();		
 		clicked=false;
-		
+		doBack=false;
+
 		if (GV.opts.musicOn) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
@@ -126,7 +153,7 @@ public class CreditsScreen implements Screen, InputProcessor {
 	public void hide() {
 		for (int p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].pause();
 	}
-		
+
 	@Override
 	public void pause() {
 		pauseTime=System.currentTimeMillis();
@@ -134,7 +161,7 @@ public class CreditsScreen implements Screen, InputProcessor {
 		for (p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].pause();
 		paused=true;
 	}
-		
+
 	@Override
 	public void resume() {
 	}
@@ -147,17 +174,17 @@ public class CreditsScreen implements Screen, InputProcessor {
 	@Override
 	public boolean keyDown (int keycode) {
 
-		
+
 		return true;
 	}
 
 	@Override
 	public boolean keyUp (int keycode) {
-		
+
 		if(keycode == Keys.BACK || keycode == Keys.ESCAPE) {
 			if (paused) resumeGame(); else {
-			clicked=true;
-		}
+				doBack=true;
+			}
 		}
 		return true;
 	}
@@ -169,17 +196,52 @@ public class CreditsScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown (int x, int y, int pointer, int button) {
+
+		int p=0;
+		selectBlobOn=false;
+		selectBlobI=numTexts+10;
+
+		if (!paused) {
+			for (p=0;p<numTexts;p++) {
+				if (x>textX[p] && x<textX[p]+textW[p] && y>textY[p] && y<textY[p]+textH[p]) {
+					selectBlobI=p;
+					selectBlobOn=true;
+				}
+
+			}
+		}
+
 		return true;
 	}
 
 	@Override
 	public boolean touchUp (int x, int y, int pointer, int button) {
-		if (paused) resumeGame(); else clicked=true;
+		if (paused) resumeGame(); else {
+			if (selectBlobOn) {
+				selection=selectBlobI;
+				clicked=true;
+			}
+			selectBlobOn=false;
+		}
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
+
+		if (!paused) {
+			if (selectBlobOn) {
+				selectBlobOn=false;
+				for (p=0;p<numTexts;p++) {
+					if (x>textX[p] && x<textX[p]+textW[p] && y>textY[p] && y<textY[p]+textH[p] && selectBlobI==p) {
+						selectBlobOn=true;
+					}
+				}
+
+			}
+		}
+
+
 		return true;
 	}
 
@@ -192,68 +254,56 @@ public class CreditsScreen implements Screen, InputProcessor {
 	public boolean scrolled (int amount) {
 		return false;
 	}	
-	
-	
+
+
 	private void sizes () {
 		int p=0;
-		
+
 		b=new Background ();
-		
+
 		bfD = TH.bf.getData();
 
 		float a,z;
 		int breaker;
-		
+
 		a=0.0f;
 		z=0.1f;
 		breaker=0;
-			
+
 		do {
 			z=z+0.1f;
 			bfD.setScale(z);
-			glphLay = new GlyphLayout (TH.bf,creditText[2]);
+			glphLay = new GlyphLayout (TH.bf,optionsText[1]);
 			a=glphLay.width;
 			breaker++;
-		} while (a<GV.w*0.85f && breaker<1500);
-		
-		creditTextScale = z;
+		} while (a<GV.w*0.65f && breaker<1500);
+
+		optionsTextScale = z;
 		float fontH=glphLay.height;
-		
-		numTexts = creditText.length;
+
+		numTexts = optionsText.length;
 		textX=new float [numTexts];
 		textY=new float [numTexts];
 		textW=new float [numTexts];
 		textH=new float [numTexts];
-		
+
 		float logoH=0;/// change when you have a logo
-		
-		float sectionSpacing,storySpacing;
-		sectionSpacing = (GV.h-logoH)/3;
-		storySpacing = sectionSpacing / 8;
-		
-		for (p=0;p<4;p++) {
-			glphLay = new GlyphLayout (TH.bf,creditText[p]);
-			textX[p]=(GV.w-glphLay.width)/2.0f;
-			textY[p]=logoH+((fontH*2)*p);
-			textW[p]=glphLay.width;
-			textH[p]=bfD.lineHeight;
-		}		
-		
 
-		for (p=4;p<11;p++) {
-			glphLay = new GlyphLayout (TH.bf,creditText[p]);
+		float sectionSpacing;
+		sectionSpacing = (GV.h-logoH)/4;
+
+		if (GV.opts.sfxOn) optionsText[0]="Sound: ON"; else optionsText[0]="Sound: OFF";
+		if (GV.opts.musicOn) optionsText[1]="Music: ON"; else optionsText[1]="Music: OFF";
+
+
+		for (p=0;p<numTexts;p++) {
+			glphLay = new GlyphLayout (TH.bf,optionsText[p]);
 			textX[p]=(GV.w-glphLay.width)/2.0f;
-			textY[p]=logoH+sectionSpacing+(storySpacing*p);
+			textY[p]=logoH+(sectionSpacing*(p+1));
 			textW[p]=glphLay.width;
 			textH[p]=bfD.lineHeight;
 		}		
 
-		glphLay = new GlyphLayout (TH.bf,creditText[p]);
-		textX[p]=(GV.w-glphLay.width)/2.0f;
-		textY[p]=GV.h-(fontH*2);
-		textW[p]=glphLay.width;
-		textH[p]=bfD.lineHeight;
-		
 		z=0.1f;
 		a=0.0f;
 		breaker=0;
@@ -270,11 +320,13 @@ public class CreditsScreen implements Screen, InputProcessor {
 
 		pausedX=(GV.w-glphLay.width)/2.0f;
 		pausedY=(GV.h-glphLay.height)/2.0f;
+		
 		pausedW=glphLay.width;
 		pausedH=bfD.lineHeight;
 		
-}
-	
+
+	}
+
 	private void resumeGame () {
 		updateTimers (System.currentTimeMillis()-pauseTime);
 		paused=false;
@@ -287,5 +339,5 @@ public class CreditsScreen implements Screen, InputProcessor {
 		b.nextComet+=t;
 		b.nextUFO+=t;
 	}
-	
+
 }

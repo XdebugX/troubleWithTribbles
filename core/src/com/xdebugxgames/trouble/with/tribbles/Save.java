@@ -1,10 +1,5 @@
 package com.xdebugxgames.trouble.with.tribbles;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Base64Coder;
@@ -14,7 +9,7 @@ import com.badlogic.gdx.utils.Json;
 public class Save {
 
 	public static void saveGame (Tribbles trib, SavedGame s) {
-		trib.myRequestHandler.saveGame(serialize (s));
+		//trib.myRequestHandler.saveGame(serialize (s));
 		if (Gdx.files.isLocalStorageAvailable()) {
 			
 			Json json = new Json();
@@ -41,6 +36,8 @@ public class Save {
 		}//local files available;
 		return (s);
 	}
+	
+	/*
     public static byte[] serialize(Object obj) {
     		try {
 	        ByteArrayOutputStream b = new ByteArrayOutputStream();
@@ -52,4 +49,5 @@ public class Save {
     			return null;
     		}
 	}
+	*/
 }

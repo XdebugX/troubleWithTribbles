@@ -19,11 +19,11 @@ public class SavedGame implements Serializable {
 	
 	public Float futureUseFloats[];
 	
-	public int board [] [],level,spawnRow[],boardW,boardH,numTribTypes,spawnRowI,spawnRowState[],boardState [] [],wTX,wTY,neededForMatch,tribsToPopX[],tribsToPopY[],numTribsToPop,numPoppedTribs,poppedTribType[],gameType;
+	public int board [] [],level,spawnRow[],boardW,boardH,numTribTypes,spawnRowI,spawnRowState[],boardState [] [],wTX,wTY,neededForMatch,tribsToPopX[],tribsToPopY[],numTribsToPop,numPoppedTribs,poppedTribType[],gameType,numLaser;
 	
 	public long spawnRowTimer,spawnInterval,wiggleInt,shutInt,score,levelThresholds[],transportInt,pauseTime;
 	
-	public float spawnRowStateTimer[],boardStateTimer[][],boardX[][],boardY[][],boardSpeed[][],poppedTribX[],poppedTribY[],poppedTribRotation[],poppedTRotationSpd[],poppedTribXD[],poppedTribYD[],poppedTRotationSpdInc[],poppedTribXDInc[],poppedTribYDInc[],spawnFade[][],spawnRowFade[];
+	public float spawnRowStateTimer[],boardStateTimer[][],boardX[][],boardY[][],boardSpeed[][],poppedTribX[],poppedTribY[],poppedTribRotation[],poppedTRotationSpd[],poppedTribXD[],poppedTribYD[],poppedTRotationSpdInc[],poppedTribXDInc[],poppedTribYDInc[],spawnFade[][],spawnRowFade[],laserAniTimer[];
 	
 	public boolean tribTouched,tribBreeding,doClearAni,clearAniDone,paused;
 	
