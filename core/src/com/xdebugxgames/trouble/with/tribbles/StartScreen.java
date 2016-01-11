@@ -4,34 +4,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-public class CreditsScreen implements Screen, InputProcessor {
+public class StartScreen implements Screen, InputProcessor {
 
 	Tribbles game;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private boolean clicked,paused;
 	
-	private static GlyphLayout glphLay;
-	private static BitmapFontData bfD;
-
-	private static float creditTextScale,textX[],textY[],textH[],textW[],pausedScale,pausedX,pausedY,pausedW,pausedH;
-	private static int numTexts,p;
+ 
+	private static float pausedX,pausedY,logoX,logoY,doorLX,doorLY,doorRX,doorRY,btnX,btnY,wallX,wallY,openAmt,openAmtInc;
 	private static long pauseTime;
-	private static final String pausedString = "Paused";
-	private static final String creditText[] = {"Music:","\"Pamgaea\" Kevin MacLeod (incompetech.com)","Licensed under Creative Commons: By Attribution 3.0","http://creativecommons.org/licenses/by/3.0/","Trouble With Tribbles","Tribbles are born pregnant!","We must get them off the ship!","Luckily there is a Klingon ship nearby.","In order to use the transporter efficiently","the captain has ordered us to only beam","them when 2 or more are together.","Copyright 2016 XdebugX Games"};
+	private static boolean doorOpen;
 	
-
-
 	// constructor to keep a reference to the main Game class
-	public CreditsScreen (Tribbles game) {
+	public StartScreen (Tribbles game) {
 		this.game = game;
 	}
 
@@ -49,37 +40,30 @@ public class CreditsScreen implements Screen, InputProcessor {
 			batch.draw(TH.texts[TH.ItxtPlanet], GV.planetX, GV.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
 			batch.draw(TH.texts[TH.ItxtSatt], GV.sattX, GV.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
 			
+			batch.draw(TH.texts[TH.ItxtStartDoorL], doorLX-openAmt, doorLY, TH.textsW[TH.ItxtStartDoorL], TH.textsH[TH.ItxtStartDoorL]);
+			batch.draw(TH.texts[TH.ItxtStartDoorR], doorRX+openAmt, doorRY, TH.textsW[TH.ItxtStartDoorR], TH.textsH[TH.ItxtStartDoorR]);
+			batch.draw(TH.texts[TH.ItxtStartBtn], btnX-openAmt, btnY, TH.textsW[TH.ItxtStartBtn], TH.textsH[TH.ItxtStartBtn]);
+			batch.draw(TH.texts[TH.ItxtStartWall], wallX, wallY, TH.textsW[TH.ItxtStartWall], TH.textsH[TH.ItxtStartWall]);
+			batch.draw(TH.texts[TH.ItxtLogo], logoX, logoY, TH.textsW[TH.ItxtLogo], TH.textsH[TH.ItxtLogo]);
+
 			if (paused) {
-				
-				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-				batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, pausedW, pausedH);
-				batch.setColor(Color.WHITE);
-				
-				bfD.setScale(pausedScale);
-				TH.bf.setColor(Color.GOLD);
-				TH.bf.draw(batch, pausedString, pausedX, pausedY);
+							
+				batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
+				batch.draw(TH.texts[TH.ItxtPaused], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
 
-			} else {
-			
-			TH.bf.setColor(Color.GOLD);
-			
-			bfD.setScale(creditTextScale);
-
-			for (p=0;p<numTexts;p++) {
-				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-				batch.draw(TH.texts[TH.ItxtPixel], textX[p], textY[p], textW[p],textH[p]);
-				batch.setColor(Color.WHITE);
-				TH.bf.draw(batch, creditText[p], textX[p], textY[p]);
 			}
-			batch.setColor (Color.WHITE);
-			}
-		 
+			
 		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
-		if (clicked==true) {
+		if (clicked==true && !doorOpen) {
 			clicked=false;
-			game.setScreen(game.mmScreen);
+			doorOpen=true;
+		}
+		
+		if (doorOpen) {
+			openAmt+=openAmtInc*delta;
+			if (openAmt>GV.w/2.0f) game.setScreen(game.mmScreen);
 		}
 	}
 
@@ -107,6 +91,9 @@ public class CreditsScreen implements Screen, InputProcessor {
 
 		sizes();		
 		clicked=false;
+		doorOpen=false;
+		openAmt=0.0f;
+		
 		
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
@@ -183,82 +170,23 @@ public class CreditsScreen implements Screen, InputProcessor {
 	}	
 	
 	
-	private void sizes () {
-		int p=0;
-			
-		bfD = TH.bf.getData();
+	private void sizes () {	
+		pausedX=(GV.w-TH.textsW[TH.ItxtPaused]) / 2.0f;
+		pausedY=(GV.h-TH.textsH[TH.ItxtPaused]) / 2.0f;
 
-		float a,z;
-		int breaker;
 		
-		a=0.0f;
-		z=0.1f;
-		breaker=0;
-			
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			glphLay = new GlyphLayout (TH.bf,creditText[2]);
-			a=glphLay.width;
-			breaker++;
-		} while (a<GV.w*0.87f && breaker<1500);
+		logoX=(GV.w-TH.textsW[TH.ItxtLogo])/2.0f;
+		logoY=0.0f;
+		wallX=0.0f;
+		wallY=0.0f;
+		doorLX=44.0f*GV.aspRatW;
+		doorLY=238.0f*GV.aspRatW;
+		doorRY=238.0f*GV.aspRatW;
+		doorRX=292.0f*GV.aspRatW;
+		btnX=210*GV.aspRatW;
+		btnY=697.0f*GV.aspRatW;
 		
-		creditTextScale = z;
-		float fontH=glphLay.height;
-		
-		numTexts = creditText.length;
-		textX=new float [numTexts];
-		textY=new float [numTexts];
-		textW=new float [numTexts];
-		textH=new float [numTexts];
-		
-		float logoH=0;/// change when you have a logo
-		
-		float sectionSpacing,storySpacing;
-		sectionSpacing = (GV.h-logoH)/3;
-		storySpacing = sectionSpacing / 8;
-		
-		for (p=0;p<4;p++) {
-			glphLay = new GlyphLayout (TH.bf,creditText[p]);
-			textX[p]=(GV.w-glphLay.width)/2.0f;
-			textY[p]=logoH+((fontH*2)*p);
-			textW[p]=glphLay.width;
-			textH[p]=bfD.lineHeight;
-		}		
-		
-
-		for (p=4;p<11;p++) {
-			glphLay = new GlyphLayout (TH.bf,creditText[p]);
-			textX[p]=(GV.w-glphLay.width)/2.0f;
-			textY[p]=logoH+sectionSpacing+(storySpacing*p);
-			textW[p]=glphLay.width;
-			textH[p]=bfD.lineHeight;
-		}		
-
-		glphLay = new GlyphLayout (TH.bf,creditText[p]);
-		textX[p]=(GV.w-glphLay.width)/2.0f;
-		textY[p]=GV.h-(fontH*2);
-		textW[p]=glphLay.width;
-		textH[p]=bfD.lineHeight;
-		
-		z=0.1f;
-		a=0.0f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			glphLay = new GlyphLayout (TH.bf,pausedString);
-			a=glphLay.width;
-			breaker++;
-		} while (a<GV.w/3 && breaker<1500);
-
-		pausedScale = z;
-
-		pausedX=(GV.w-glphLay.width)/2.0f;
-		pausedY=(GV.h-glphLay.height)/2.0f;
-		pausedW=glphLay.width;
-		pausedH=bfD.lineHeight;
+		openAmtInc=GV.w/2.0f;
 		
 }
 	

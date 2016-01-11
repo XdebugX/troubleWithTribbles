@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 
 
 public class MMScreen implements Screen, InputProcessor {
@@ -19,16 +18,11 @@ public class MMScreen implements Screen, InputProcessor {
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame,selectGameType,paused;
-	private int selectBlobI,selection,p,numMenuStrings,numSure,numGameType;
+	private int selectBlobI,selection,p,numMenuStrings,numGameType,numBtns,btnsTexts[],btnsTextsSure[];
 	private static GlyphLayout gl;
 	private static BitmapFontData bfD;
-	private Background b;
-	private static long pauseTime;
-	private static float menuTextScale,sureScale,gameTypeScale,menuStringsX[],menuStringsW[],menuStringsH[],menuStringsY[],sureStringsX[],sureStringsW[],sureStringsH[],sureStringsY[],gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[],pausedX,pausedY,pausedScale,pausedW,pausedH;
-	private static final String [] menuStrings = {"New Game","Continue","Options","Credits"};
-	private static final String [] sureStrings = {"You already have a saved game.","Starting a new game will overwrite your saved game.","Are you sure?","Yes","No"};
+	private static float gameTypeScale,gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[],pausedX,pausedY,btnsX,btnsSpac,btnsY,btnsTextsOffY[],btnsTextsOffX[],surePX,surePY,btnsTextsOffYSure[],btnsTextsOffXSure[];
 	private static final String [] gameTypeStrings = {"Select gameplay type:","Endless","Clear the level"};
-	private static final String pausedString = "Paused";
 
 
 
@@ -46,48 +40,27 @@ public class MMScreen implements Screen, InputProcessor {
 
 		batch.begin();
 
-		for (p=0;p<b.numStrips;p++) {
-			batch.draw(TH.strips[b.stripNum40[p]], 0, b.stripY[p], TH.stripsW[0], TH.stripsH[0]);
-			batch.draw(TH.strips[10+b.stripNum10[p]], 0, b.stripY[p]+TH.stripsH[0], TH.stripsW[10], TH.stripsH[10]);
-			batch.draw(TH.strips[20+b.stripNum20[p]], 0, b.stripY[p]+TH.stripsH[0]+TH.stripsH[10], TH.stripsW[20], TH.stripsH[20]);
-		}
 
-		if (b.isPlanet) batch.draw(TH.texts[TH.ItxtPlanet], b.planetX, b.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
-		if (b.isSatt) batch.draw(TH.texts[TH.ItxtSatt], b.sattX, b.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
-		if (b.asteroidOnScreen) batch.draw(TH.texts[TH.ItxtAsteroids+b.asteroidType], b.asteroidX, b.asteroidY, TH.textsW[TH.ItxtAsteroids+b.asteroidType],TH.textsH[TH.ItxtAsteroids+b.asteroidType]);
-		if (b.cometOnScreen) {			
-			if (!b.cometDX) batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType]);								
-			else batch.draw(TH.texts[TH.ItxtComets+b.cometType], b.cometX, b.cometY, TH.textsW[TH.ItxtComets+b.cometType]/2.0f, TH.textsH[TH.ItxtComets+b.cometType]/2.0f, TH.textsW[TH.ItxtComets+b.cometType], TH.textsH[TH.ItxtComets+b.cometType],1.0f,1.0f,270.0f);
-		}
+		batch.draw(TH.texts[TH.ItxtBack], 0, 0, TH.textsW[TH.ItxtBack], TH.textsH[TH.ItxtBack]);
+		batch.draw(TH.texts[TH.ItxtPlanet], GV.planetX, GV.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
+		batch.draw(TH.texts[TH.ItxtSatt], GV.sattX, GV.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
 		
 		if (paused) {
-
-			batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, pausedW, pausedH);
-			batch.setColor(Color.WHITE);
-			
-			bfD.setScale(pausedScale);
-			TH.bf.setColor(Color.GOLD);
-			TH.bf.draw(batch, pausedString, pausedX, pausedY);
+			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
+			batch.draw(TH.texts[TH.ItxtPaused], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
 
 		} else {
 
 		if (areYouSure) {
 
-			for (p=0;p<numSure;p++) {
-
-				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-				batch.draw(TH.texts[TH.ItxtPixel], sureStringsX[p], sureStringsY[p], sureStringsW[p], sureStringsH[p]);
-				batch.setColor(Color.WHITE);
-				
-				if (p<2) bfD.setScale(sureScale); else bfD.setScale (menuTextScale);
-
-				TH.bf.setColor(Color.GOLD);
-				if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); 
-				TH.bf.draw(batch, sureStrings[p], sureStringsX[p], sureStringsY[p]);
+			batch.draw (TH.texts[TH.ItxtSure], surePX, surePY, TH.textsW[TH.ItxtSure], TH.textsH[TH.ItxtSure]);
+			for (p=0;p<2;p++) {
+				if (selectBlobI==p && selectBlobOn) batch.setColor(0.5f,0.5f,0.5f,1.0f); else batch.setColor (Color.WHITE); 
+				batch.draw (TH.texts[TH.ItxtBtnBlu], btnsX, surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac), TH.textsW[TH.ItxtBtnBlu], TH.textsH[TH.ItxtBtnBlu]);
+				batch.draw (TH.texts[btnsTextsSure[p]], btnsTextsOffXSure[p], btnsTextsOffYSure[p], TH.textsW[btnsTextsSure[p]], TH.textsH[btnsTextsSure[p]]);
 			}
-
-
+			batch.setColor (Color.WHITE);
+			
 		} else if (selectGameType) {
 
 			bfD.setScale(gameTypeScale);
@@ -106,22 +79,15 @@ public class MMScreen implements Screen, InputProcessor {
 
 			
 		} else {
-
-			bfD.setScale(menuTextScale);
-
-			for (p=0;p<numMenuStrings;p++) {
+			for (p=0;p<numBtns;p++) {
 				if (!(p==1 && noSavedGame)) {
-					
-					batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-					batch.draw(TH.texts[TH.ItxtPixel], menuStringsX[p], menuStringsY[p], menuStringsW[p], menuStringsH[p]);
-					batch.setColor(Color.WHITE);
-					
-					TH.bf.setColor(Color.GOLD);
-					if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); 
-					TH.bf.draw(batch, menuStrings[p], menuStringsX[p], menuStringsY[p]);
+					if (selectBlobI==p && selectBlobOn) batch.setColor(0.5f,0.5f,0.5f,1.0f); else batch.setColor (Color.WHITE); 
+					batch.draw(TH.texts[TH.ItxtBtnBlu], btnsX, btnsY + (btnsSpac*p), TH.textsW[TH.ItxtBtnBlu], TH.textsH[TH.ItxtBtnBlu]);
+					batch.draw(TH.texts[btnsTexts[p]], btnsTextsOffX[p], btnsTextsOffY[p], TH.textsW[btnsTexts[p]], TH.textsH[btnsTexts[p]]);
 				}
 			}
-
+			
+			batch.setColor (Color.WHITE);
 		}
 
 		}//not paused
@@ -134,12 +100,12 @@ public class MMScreen implements Screen, InputProcessor {
 			clicked=false;
 
 			if (areYouSure) {
-				if (selection==3) {
+				if (selection==0) {
 					selectGameType=true;
 					areYouSure=false;
 				}
 
-				if (selection==4) {
+				if (selection==1) {
 					areYouSure=false;
 				}
 
@@ -149,6 +115,7 @@ public class MMScreen implements Screen, InputProcessor {
 					GV.s.gameType=0;
 					GV.doNewGame();
 					selectGameType=false;
+					//for (p=0;p<TH.numMusic;p++) TH.loopingMusic[p].stop();
 					game.setScreen(game.gameScreen);
 				}
 				if (selection == 2) {
@@ -156,6 +123,7 @@ public class MMScreen implements Screen, InputProcessor {
 					GV.s.gameType=1;
 					GV.doNewGame();
 					selectGameType=false;
+					//for (p=0;p<TH.numMusic;p++) TH.loopingMusic[p].stop();
 					game.setScreen (game.gameScreen);
 				}
 				
@@ -171,6 +139,7 @@ public class MMScreen implements Screen, InputProcessor {
 
 				if (!noSavedGame) if (selection==1) {
 					GV.s=Save.loadGame();
+					//for (p=0;p<TH.numMusic;p++) TH.loopingMusic[p].stop();
 					game.setScreen(game.gameScreen);			
 				}
 				
@@ -189,6 +158,7 @@ public class MMScreen implements Screen, InputProcessor {
 
 
 		if (GV.exit) {
+			//game.setScreen (game.startScreen);
 			GV.exit=false;
 			Gdx.app.exit(); 
 		}
@@ -201,25 +171,6 @@ public class MMScreen implements Screen, InputProcessor {
 			} else oneFrame=true;
 
 		}
-
-		if (!paused) {
-
-		//////////////////do background stuff
-		if (!b.asteroidOnScreen) if (System.currentTimeMillis()>b.nextAsteroid) {
-			GV.spawnAsteroid(b);
-		}		
-		if (b.asteroidOnScreen) {
-			GV.moveAsteroid(b, delta);	
-		}
-
-		if (!b.cometOnScreen) if (System.currentTimeMillis()>b.nextComet) {
-			GV.spawnComet(b);
-		}		
-		if (b.cometOnScreen) {
-			GV.moveComet(b, delta);	
-		}
-
-		}//notpaused
 		
 	}
 
@@ -228,17 +179,18 @@ public class MMScreen implements Screen, InputProcessor {
 		GV.doSizes();
 		TH.sizes();
 		sizes();
-		camera.setToOrtho(true, GV.w, GV.h);
-		camera.position.set(GV.w / 2, GV.h / 2, 0);
+		sizes();
+		camera.setToOrtho(true, GV.w, GV.trueH);
+		camera.position.set(GV.w / 2, GV.trueH / 2, 0);
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 	}
 
 	@Override
 	public void show() {
-		camera = new OrthographicCamera(GV.w, GV.h);
-		camera.setToOrtho(true, GV.w, GV.h);
-		camera.position.set(GV.w / 2, GV.h / 2, 0);
+		camera = new OrthographicCamera(GV.w, GV.trueH);
+		camera.setToOrtho(true, GV.w, GV.trueH);
+		camera.position.set(GV.w / 2, GV.trueH / 2, 0);
 		camera.update();
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
@@ -266,7 +218,6 @@ public class MMScreen implements Screen, InputProcessor {
 	}
 	@Override
 	public void pause() {
-		pauseTime=System.currentTimeMillis();
 		int p;
 		for (p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].pause();
 		paused=true;
@@ -319,13 +270,13 @@ public class MMScreen implements Screen, InputProcessor {
 
 		if (!paused) {
 		if (areYouSure) {
-			for (p=3;p<5;p++) {
-				if (x>sureStringsX[p] && x<sureStringsX[p]+sureStringsW[p] && y>sureStringsY[p] && y<sureStringsY[p]+sureStringsH[p]) {
+			
+			for (p=0;p<2;p++) {
+				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac) && y<surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac) + TH.textsH[TH.ItxtBtnBlu]) { 
 					selectBlobI=p;
 					selectBlobOn=true;
 				}
 			}
-
 		}
 
 		else if (selectGameType) {
@@ -340,8 +291,8 @@ public class MMScreen implements Screen, InputProcessor {
 			
 		} else {
 
-			for (p=0;p<numMenuStrings;p++) {
-				if (x>menuStringsX[p] && x<menuStringsX[p]+menuStringsW[p] && y>menuStringsY[p] && y<menuStringsY[p]+menuStringsH[p]) {
+			for (p=0;p<numBtns;p++) {
+				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>btnsY + (btnsSpac*p) && y<btnsY + (btnsSpac*p) + TH.textsH[TH.ItxtBtnBlu]) { 
 					selectBlobI=p;
 					selectBlobOn=true;
 				}
@@ -388,12 +339,11 @@ public class MMScreen implements Screen, InputProcessor {
 
 		if (areYouSure) {
 
-			for (p=3;p<5;p++) {
-				if (x>sureStringsX[p] && x<sureStringsX[p]+sureStringsW[p] && y>sureStringsY[p] && y<sureStringsY[p]+sureStringsH[p] && selectBlobI==p) {
+			for (p=0;p<2;p++) {
+				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac) && y<surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac) + TH.textsH[TH.ItxtBtnBlu] && selectBlobI==p) { 
 					selectBlobOn=true;
 				}
 			}
-
 
 		}
 		else if (selectGameType) {
@@ -407,8 +357,8 @@ public class MMScreen implements Screen, InputProcessor {
 			
 		} else {
 			
-			for (p=0;p<numMenuStrings;p++) {
-				if (x>menuStringsX[p] && x<menuStringsX[p]+menuStringsW[p] && y>menuStringsY[p] && y<menuStringsY[p]+menuStringsH[p] && selectBlobI==p) {
+			for (p=0;p<numBtns;p++) {
+				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>btnsY + (btnsSpac*p) && y<btnsY + (btnsSpac*p) + TH.textsH[TH.ItxtBtnBlu] && selectBlobI==p) { 
 					selectBlobOn=true;
 				}
 			}
@@ -430,41 +380,12 @@ public class MMScreen implements Screen, InputProcessor {
 	}	   
 
 	private void sizes() {
-		b = new Background();
 
 		bfD = TH.bf.getData();
 
 		float a,z;
 		int breaker;
 		
-		a=0.0f;
-		z=0.1f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			gl = new GlyphLayout (TH.bf,menuStrings[0]);
-			a=gl.height;
-			breaker++;
-		} while (a<GV.h*0.05f && breaker<1500);
-
-		menuTextScale = z;
-
-		a=0;
-		z=0.1f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			gl = new GlyphLayout (TH.bf,sureStrings[1]);
-			a=gl.width;
-			breaker++;
-		} while (a<GV.w*0.85f && breaker<1500);
-
-		sureScale = z;
-
 		a=0;
 		z=0.1f;
 		breaker=0;
@@ -479,42 +400,11 @@ public class MMScreen implements Screen, InputProcessor {
 
 		gameTypeScale = z;
 		
-		z=0.1f;
-		a=0.0f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			gl = new GlyphLayout (TH.bf,pausedString);
-			a=gl.width;
-			breaker++;
-		} while (a<GV.w/3 && breaker<1500);
-
-		pausedScale = z;
-
-		pausedX=(GV.w-gl.width)/2.0f;
-		pausedY=(GV.h-gl.height)/2.0f;
-		pausedW=gl.width;
-		pausedH=bfD.lineHeight;
 
 
 
 
-
-		numMenuStrings=menuStrings.length;
-		numSure = sureStrings.length;
 		numGameType = gameTypeStrings.length;
-		menuStringsX=new float [numMenuStrings];
-		menuStringsY=new float [numMenuStrings];
-		menuStringsW=new float [numMenuStrings];
-		menuStringsH=new float [numMenuStrings];
-
-		sureStringsX=new float [numSure];
-		sureStringsY=new float [numSure];
-		sureStringsW=new float [numSure];
-		sureStringsH=new float [numSure];
-
 		gameTypeStringsX=new float [numGameType];
 		gameTypeStringsY=new float [numGameType];
 		gameTypeStringsW=new float [numGameType];
@@ -522,40 +412,8 @@ public class MMScreen implements Screen, InputProcessor {
 
 
 		float logoH=0;/// change when you have a logo
-		float menuSpacing = (GV.h-logoH) / (numMenuStrings+1);
-		float sureSpacing = (GV.h-logoH) / (numSure+1);
 		float gameTypeSpacing = (GV.h-logoH) / (numGameType+1);
 
-		bfD.setScale(menuTextScale);
-
-		
-		for (p=0;p<numMenuStrings;p++) {
-			gl = new GlyphLayout (TH.bf,menuStrings[p]);
-			menuStringsX[p]=(GV.w-gl.width)/2.0f;
-			menuStringsY[p]=menuSpacing*(p+1);
-			menuStringsW[p]=gl.width;
-			menuStringsH[p]=bfD.lineHeight;
-		}
-
-		bfD.setScale(sureScale);
-
-		for (p=0;p<2;p++) {
-			gl = new GlyphLayout (TH.bf,sureStrings[p]);
-			sureStringsX[p]=(GV.w-gl.width)/2.0f;
-			sureStringsY[p]=sureSpacing*(p+1);
-			sureStringsW[p]=gl.width;
-			sureStringsH[p]=bfD.lineHeight;
-		}
-
-		bfD.setScale(menuTextScale);
-
-		for (p=2;p<5;p++) {
-			gl = new GlyphLayout (TH.bf,sureStrings[p]);
-			sureStringsX[p]=(GV.w-gl.width)/2.0f;
-			sureStringsY[p]=sureSpacing*(p+1);
-			sureStringsW[p]=gl.width;
-			sureStringsH[p]=bfD.lineHeight;
-		}
 
 		bfD.setScale(gameTypeScale);
 
@@ -567,21 +425,49 @@ public class MMScreen implements Screen, InputProcessor {
 			gameTypeStringsH[p]=bfD.lineHeight;
 		}
 
-		
+		pausedX=(GV.w-TH.textsW[TH.ItxtPaused]) / 2.0f;
+		pausedY=(GV.h-TH.textsH[TH.ItxtPaused]) / 2.0f;
 
+				
+		numBtns=4;
+		btnsTexts = new int [] {TH.ItxtNew,TH.ItxtCont,TH.ItxtOpt,TH.ItxtCred};
+		
+		if (GV.isAndroid) { 
+			numBtns=8;
+			btnsTexts = new int [] {TH.ItxtNew,TH.ItxtCont,TH.ItxtOpt,TH.ItxtCred, TH.ItxtAch, TH.ItxtLdr,TH.ItxtOur, TH.ItxtShare};
+
+		}
+
+		
+		btnsTextsOffY = new float [numBtns];
+		btnsTextsOffX = new float [numBtns];
+		btnsX = (GV.w - TH.textsW[TH.ItxtBtnBlu]) / 2.0f;
+		btnsSpac = (GV.h-logoH) / (numBtns);
+		btnsY = logoH;
+		
+		for (p=0;p<numBtns;p++) {
+		btnsTextsOffY[p] = btnsY + (btnsSpac*p) + ((TH.textsH[TH.ItxtBtnBlu]-TH.textsH[btnsTexts[p]]) / 2.0f);
+		btnsTextsOffX[p] = (GV.w-TH.textsW[btnsTexts[p]]) / 2.0f;
+		}
+		
+		surePY = btnsY;
+		surePX = (GV.w-TH.textsW[TH.ItxtSure]) / 2.0f;
+		btnsTextsOffYSure= new float [2];
+		btnsTextsOffXSure = new float [2];
+		btnsTextsSure = new int [] {TH.ItxtYes, TH.ItxtNo};
+		
+		for (p=0;p<2;p++) {
+			btnsTextsOffYSure[p]=surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac) +((TH.textsH[TH.ItxtBtnBlu]-TH.textsH[btnsTextsSure[p]])/2.0f);
+			btnsTextsOffXSure[p]=(GV.w - TH.textsW[btnsTextsSure[p]]) / 2.0f;
+		}
+		
+		
+		
 	}
 	
 	private void resumeGame () {
-		updateTimers (System.currentTimeMillis()-pauseTime);
 		paused=false;
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
-	}
-
-
-	private void updateTimers (long t) {
-		b.nextAsteroid+=t;
-		b.nextComet+=t;
-		b.nextUFO+=t;
 	}
 
 }

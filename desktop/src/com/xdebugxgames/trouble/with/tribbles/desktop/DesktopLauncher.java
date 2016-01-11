@@ -12,8 +12,8 @@ public class DesktopLauncher implements IActivityRequestHandler {
 	
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width=607;
-		config.height=1080;
+		config.width=750;//607;
+		config.height=1334;//1080;
 		config.backgroundFPS=-1;
 		config.foregroundFPS=66;
 		config.vSyncEnabled=false;

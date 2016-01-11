@@ -40,7 +40,8 @@ public class SplashScreen implements Screen {
 	public void render(float delta) {
 		
 		if (done2) {
-			game.setScreen(game.mmScreen);
+			//game.setScreen(game.mmScreen);
+			game.setScreen (game.startScreen);
 		} else {
 
 		// update and draw stuff
@@ -90,9 +91,9 @@ public class SplashScreen implements Screen {
 		int p=0;
 		GV.doSizes();
 
-		camera = new OrthographicCamera(GV.w,GV.h);
-		camera.setToOrtho (true,GV.w,GV.h);
-		camera.position.set(GV.w/2, GV.h/2, 0);
+		camera = new OrthographicCamera(GV.w, GV.trueH);
+		camera.setToOrtho(true, GV.w, GV.trueH);
+		camera.position.set(GV.w / 2, GV.trueH / 2, 0);
 		camera.update();
 
 		batch = new SpriteBatch();

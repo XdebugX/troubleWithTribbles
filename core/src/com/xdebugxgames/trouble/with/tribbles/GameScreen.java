@@ -8,8 +8,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -22,13 +20,9 @@ public class GameScreen implements Screen, InputProcessor {
 	private OrthographicCamera camera;
 	private int p,t,pp;
 	private ShapeRenderer sr;
-	private GlyphLayout gl;
-	private BitmapFontData bfD;
-	private static int whichTribX,whichTribY,highestTrib,lastWootPlayed,woot,randomCardD,wiggleRate,tribsFoundX[],tribsFoundY[],numSur,numTribsFound,numTribsSearched,boardX,boardY,tribsOnBoard[],numTribsOnBoard,tribToBreed,breaker,breeder;
-	private static float bX,bY,srX,srY,tribW,tribH,bW,bH,boardSpeedInc,startSpeed,poppedTribSpeed,poppedTribRotationSpeed,scoreBarH,scoreTextScale,levelX,pausedX,pausedY,pausedScale,levelClearX,levelClearY,levelClearW,levelClearH,levelClearScale,
-	corBX,corBY,doorRX,doorRY,doorFX,doorFY,topX,topY,botX,botY,doorLX,doorLY,sideRX,sideRY,laserX,laserY,laserAngle,windowX,windowY,pausedW,pausedH;
-	private static String scoreString,levelString;
-	private static final String pausedString = "Paused",levelClearString = "Level Clear!";
+	private static int whichTribX,whichTribY,highestTrib,lastWootPlayed,woot,randomCardD,wiggleRate,tribsFoundX[],tribsFoundY[],numSur,numTribsFound,numTribsSearched,boardX,boardY,tribsOnBoard[],numTribsOnBoard,tribToBreed,breaker,breeder,digits[],largestDig,levelDigits[],largestLevelDig;
+	private static float bX,bY,srX,srY,tribW,tribH,bW,bH,boardSpeedInc,startSpeed,scoreBarH,levelX,pausedX,pausedY,levelClearX,levelClearY,
+	corBX,corBY,doorRX,doorRY,doorFX,doorFY,topX,topY,botX,botY,doorLX,doorLY,sideRX,sideRY,laserX,laserY,laserAngle,laserAngleB,windowX,windowY,totLaserW,laserH,scoreX,scoreY,counterX,counterY,digitW,digitY,levelY,levelDigX,levelDigY;
 	private static boolean doBack,tribbleTouched,isATrib,noTribs,levelClear,matchAvailable,movingDone,prevTribs;
 
 
@@ -48,9 +42,12 @@ public class GameScreen implements Screen, InputProcessor {
 		batch.begin();
 
 		batch.draw(TH.texts[TH.ItxtWindow], windowX, windowY, TH.textsW[TH.ItxtWindow], TH.textsH[TH.ItxtWindow]);
+		batch.setColor(0.0f,1.0f,1.0f,0.5f);
 		for (p=0;p<GV.s.numLaser;p++) {
-			batch.draw(TH.Anims[TH.IanimLaser].getKeyFrame(GV.s.laserAniTimer[p] += delta, false ), laserX, laserY, TH.animW[TH.IanimLaser]/2.0f, TH.animH[TH.IanimLaser]/2.0f, TH.animW[TH.IanimLaser], TH.animH[TH.IanimLaser], 1.0f, 1.0f, laserAngle);
+			if (!GV.s.laserD[p]) batch.draw(TH.texts[TH.ItxtPixel], GV.s.laserX[p], laserY, totLaserW/2.0f, laserH/2.0f, GV.s.laserW[p], laserH, 1.0f, 1.0f, laserAngle); else 
+				batch.draw(TH.texts[TH.ItxtPixel], GV.s.laserX[p], laserY, totLaserW/2.0f, laserH/2.0f, GV.s.laserW[p], laserH, 1.0f, 1.0f, laserAngleB);
 		}
+		batch.setColor(Color.WHITE);
 		batch.draw(TH.texts[TH.ItxtSideR], sideRX, sideRY, TH.textsW[TH.ItxtSideR], TH.textsH[TH.ItxtSideR]);
 		batch.draw(TH.texts[TH.ItxtBot], botX, botY, TH.textsW[TH.ItxtBot], TH.textsH[TH.ItxtBot]);
 		batch.draw(TH.texts[TH.ItxtTop], topX, topY, TH.textsW[TH.ItxtTop], TH.textsH[TH.ItxtTop]);		
@@ -63,15 +60,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 
 		if (GV.s.paused) {
+			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
+			batch.draw(TH.texts[TH.ItxtPaused], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
 			
-			batch.setColor (0.0f,0.0f,0.0f,0.7f);
-			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, pausedW, pausedH);
-			batch.setColor(Color.WHITE);
-
-			bfD.setScale(pausedScale);
-			TH.bf.setColor(Color.GOLD);
-			TH.bf.draw(batch, pausedString, pausedX, pausedY);
-
 		} else {
 
 
@@ -128,23 +119,27 @@ public class GameScreen implements Screen, InputProcessor {
 
 			}
 
-			for (p=0;p<GV.s.numPoppedTribs;p++) {
-				batch.draw(TH.texts[TH.ItxtBallsIdle+GV.s.poppedTribType[p]], GV.s.poppedTribX[p], GV.s.poppedTribY[p], tribW/2.0f, tribH/2.0f, tribW, tribH, 1.0f, 1.0f, GV.s.poppedTribRotation[p]);															
+			batch.draw(TH.texts[TH.ItxtScore], scoreX, scoreY, TH.textsW[TH.ItxtScore], TH.textsH[TH.ItxtScore]);
+			batch.setColor(Color.BLACK);
+			batch.draw(TH.texts[TH.ItxtPixel], counterX, counterY, TH.textsW[TH.ItxtCounter], TH.textsH[TH.ItxtCounter]);
+			batch.setColor(Color.WHITE);
+			batch.draw(TH.texts[TH.ItxtCounter], counterX, counterY, TH.textsW[TH.ItxtCounter], TH.textsH[TH.ItxtCounter]);
+			for (p=largestDig;p<8;p++) {
+			batch.draw(TH.texts[TH.ItxtN+digits[p]], counterX+(digitW*p)+((digitW-TH.textsW[TH.ItxtN+digits[p]])/2.0f), digitY, TH.textsW[TH.ItxtN+digits[p]], TH.textsH[TH.ItxtN+digits[p]]);
 			}
-			bfD.setScale(scoreTextScale);
-			TH.bf.setColor(Color.GOLD);
-			TH.bf.draw(batch, scoreString, 0, 0);		
-			TH.bf.draw(batch, levelString, levelX, 0);
+
+			batch.draw(TH.texts[TH.Itxtlevel], levelX, levelY, TH.textsW[TH.Itxtlevel], TH.textsH[TH.Itxtlevel]);
+			for (p=largestLevelDig;p<4;p++) {
+				batch.draw(TH.texts[TH.ItxtN+levelDigits[p]], levelDigX+(digitW*(p-largestLevelDig))+((digitW-TH.textsW[TH.ItxtN+levelDigits[p]])/2.0f), levelDigY, TH.textsW[TH.ItxtN+levelDigits[p]], TH.textsH[TH.ItxtN+levelDigits[p]]);
+			}
+
+
 
 			if (GV.s.doClearAni) {
-				
-				batch.setColor (0.0f,0.0f,0.0f,0.8f);
-				batch.draw(TH.texts[TH.ItxtPixel], levelClearX, levelClearY, levelClearW, levelClearH);
-				batch.setColor(Color.WHITE);
-				
-				bfD.setScale(levelClearScale);
-				TH.bf.setColor(Color.GOLD);
-				TH.bf.draw(batch, levelClearString, levelClearX, levelClearY);		
+				batch.setColor (0.5f,0.5f,0.5f,1.0f);
+				batch.draw(TH.texts[TH.ItxtPixel], levelClearX, levelClearY, TH.textsW[TH.ItxtlevelClear], TH.textsH[TH.ItxtlevelClear]);
+				batch.setColor (Color.WHITE);
+				batch.draw(TH.texts[TH.ItxtlevelClear], levelClearX, levelClearY, TH.textsW[TH.ItxtlevelClear], TH.textsH[TH.ItxtlevelClear]);
 			}
 
 		}//not paused
@@ -160,6 +155,7 @@ public class GameScreen implements Screen, InputProcessor {
 			doBack=false;
 			if (GV.s.paused) resumeGame(); else {
 				Save.saveGame(game, GV.s);
+				//for (p=0;p<TH.numMusic;p++) TH.loopingMusic[p].stop();
 				game.setScreen(game.mmScreen);				
 			}
 		}
@@ -272,39 +268,6 @@ public class GameScreen implements Screen, InputProcessor {
 			}
 
 
-			////////////////////// Popped Tribbles
-
-			for (p=0;p<GV.s.numPoppedTribs;p++) {
-				GV.s.poppedTribXD[p]+=GV.s.poppedTribXDInc[p];
-				GV.s.poppedTribYD[p]+=GV.s.poppedTribYDInc[p];
-				GV.s.poppedTRotationSpd[p]+=GV.s.poppedTRotationSpdInc[p];
-
-				GV.s.poppedTribX[p]+=GV.s.poppedTribXD[p]*delta;
-				GV.s.poppedTribY[p]+=GV.s.poppedTribYD[p]*delta;
-				GV.s.poppedTribRotation[p]+=GV.s.poppedTRotationSpd[p]*delta;
-
-				if (GV.s.poppedTribX[p]<0.0-tribW || GV.s.poppedTribX[p]>GV.w || GV.s.poppedTribY[p]<0-tribH || GV.s.poppedTribY[p]>GV.h) {
-					for (t=p;t<GV.s.numPoppedTribs-1;t++) {
-						GV.s.poppedTribRotation[t]=GV.s.poppedTribRotation[t+1];
-						GV.s.poppedTRotationSpd[t]=GV.s.poppedTRotationSpd[t+1];
-						GV.s.poppedTRotationSpdInc[t]=GV.s.poppedTRotationSpdInc[t+1];
-						GV.s.poppedTribType[t]=GV.s.poppedTribType[t+1];
-						GV.s.poppedTribX[t]=GV.s.poppedTribX[t+1];
-						GV.s.poppedTribXD[t]=GV.s.poppedTribXD[t+1];
-						GV.s.poppedTribY[t]=GV.s.poppedTribY[t+1];
-						GV.s.poppedTribYD[t]=GV.s.poppedTribYD[t+1];
-						GV.s.poppedTribXDInc[t]=GV.s.poppedTribXDInc[t+1];
-						GV.s.poppedTribYDInc[t]=GV.s.poppedTribYDInc[t+1];
-
-					}
-					GV.s.numPoppedTribs--;
-					p--;
-				}
-
-			}
-
-
-
 			//set spawn tribbles to idle state when spawn animation finished
 			for (p=0;p<GV.s.boardW;p++) for (t=0;t<GV.s.boardH;t++) if (GV.s.board[p][t]<GV.s.numTribTypes) if (GV.s.boardState[p][t]==0) {
 				//set fade amount to animation timer
@@ -334,15 +297,20 @@ public class GameScreen implements Screen, InputProcessor {
 					GV.s.boardState[p] [t]=0;
 					GV.s.boardStateTimer[p][t]=0;
 					GV.s.spawnFade[p][t]=0;
-					GV.s.laserAniTimer[GV.s.numLaser]=0.0f;
-					GV.s.numLaser++;
 				}
 			}
 
 			//check for laser ani finished
 			for (p=0;p<GV.s.numLaser;p++) {
-				if (TH.Anims[TH.IanimLaser].isAnimationFinished(GV.s.laserAniTimer[p])) {
-					for (t=p;t<GV.s.numLaser-1;t++) GV.s.laserAniTimer[t]=GV.s.laserAniTimer[t+1];
+				if (!GV.s.laserD[p]) GV.s.laserW[p]+=(690.0f*GV.aspRatW)*delta;
+				if (GV.s.laserW[p]>totLaserW) GV.s.laserD[p]=true;
+				if (GV.s.laserD[p]) GV.s.laserW[p]-=(690.0f*GV.aspRatW)*delta;
+				if (GV.s.laserW[p]<0) {
+					for (t=p;t<GV.s.numLaser-1;t++) {
+						GV.s.laserD[t]=GV.s.laserD[t+1];
+						GV.s.laserW[t]=GV.s.laserW[t+1];
+						GV.s.laserX[t]=GV.s.laserX[t+1];
+					}
 					GV.s.numLaser--;
 					p--;
 				}
@@ -502,9 +470,9 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void resize(int width, int height) {
 		GV.doSizes();
-		camera = new OrthographicCamera(GV.w, GV.h);
-		camera.setToOrtho(true, GV.w, GV.h);
-		camera.position.set(GV.w / 2, GV.h / 2, 0);
+		sizes();
+		camera.setToOrtho(true, GV.w, GV.trueH);
+		camera.position.set(GV.w / 2, GV.trueH / 2, 0);
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		sr=new ShapeRenderer();
@@ -519,9 +487,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void show() {
-		camera = new OrthographicCamera(GV.w, GV.h);
-		camera.setToOrtho(true, GV.w, GV.h);
-		camera.position.set(GV.w / 2, GV.h / 2, 0);
+		camera = new OrthographicCamera(GV.w, GV.trueH);
+		camera.setToOrtho(true, GV.w, GV.trueH);
+		camera.position.set(GV.w / 2, GV.trueH / 2, 0);
 		camera.update();
 		batch = new SpriteBatch();
 		batch.setProjectionMatrix(camera.combined);
@@ -530,18 +498,19 @@ public class GameScreen implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(this);
 		Gdx.input.setCatchBackKey(true);
 
-		gl = new GlyphLayout ();
-
-		scoreString="Score "+GV.s.score;
-		levelString = "Level "+GV.s.level;
-
 		tribsFoundX = new int [GV.s.boardW*GV.s.boardH];
 		tribsFoundY = new int [GV.s.boardW*GV.s.boardH];
 
 		tribsOnBoard = new int [GV.s.boardW*GV.s.boardH];
 
 		sizes();
+		
+		digits=new int [8];
+		levelDigits= new int [4];
+		calcDigits();
+		calcLevelDigits();
 
+		
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
@@ -639,69 +608,13 @@ public class GameScreen implements Screen, InputProcessor {
 	private void sizes () {
 		int p,t;
 
-		scoreBarH = GV.h/40.0f;
+		levelClearX=(GV.w-TH.textsW[TH.ItxtlevelClear]) / 2.0f;
+		levelClearY=(GV.h-TH.textsH[TH.ItxtlevelClear]) / 2.0f;
 
-		bfD = TH.bf.getData();
+		
+		pausedX=(GV.w-TH.textsW[TH.ItxtPaused]) / 2.0f;
+		pausedY=(GV.h-TH.textsH[TH.ItxtPaused]) / 2.0f;
 
-		float a,z;
-		int breaker;
-
-		a=0.0f;
-		z=0.1f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			gl = new GlyphLayout (TH.bf,levelClearString);
-			a=gl.width;
-			breaker++;
-		} while (a<GV.w/3 && breaker<1500);
-
-		levelClearScale = z;
-
-		levelClearX=(GV.w-gl.width)/2.0f;
-		levelClearY=(GV.h-gl.height)/2.0f;
-		levelClearW=gl.width;
-		levelClearH=bfD.lineHeight;
-
-
-		z=0.1f;
-		a=0.0f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			gl = new GlyphLayout (TH.bf,pausedString);
-			a=gl.width;
-			breaker++;
-		} while (a<GV.w/3 && breaker<1500);
-
-		pausedScale = z;
-
-		pausedX=(GV.w-gl.width)/2.0f;
-		pausedY=(GV.h-gl.height)/2.0f;
-		pausedW=gl.width;
-		pausedH=bfD.lineHeight;
-
-
-		z=0.1f;
-		a=0.0f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			gl = new GlyphLayout (TH.bf,"Score: 10000");
-			a=gl.height;
-			breaker++;
-		} while (a<scoreBarH && breaker<1500);
-
-		scoreTextScale = z;
-
-		gl = new GlyphLayout (TH.bf, levelString);
-		levelX=GV.w-gl.width;
 
 		float h=GV.h-scoreBarH;
 
@@ -718,9 +631,6 @@ public class GameScreen implements Screen, InputProcessor {
 
 		boardSpeedInc = (10.0f+(GV.s.level/10.0f))*GV.aspRatL;
 		startSpeed = (50.0f+(GV.s.level*0.5f))*GV.aspRatL;
-
-		poppedTribSpeed = 5.0f*GV.aspRatL;
-		poppedTribRotationSpeed = 3.6f*4.0f;
 
 		srX=bX;
 		srY=bY+(tribH*(GV.s.boardH));
@@ -758,12 +668,28 @@ public class GameScreen implements Screen, InputProcessor {
 
 		laserX=(379.0f+85.0f)*GV.aspRatW;
 		laserY=(-5.0f+540.0f)*GV.aspRatW;
+		totLaserW=(230.0f*GV.aspRatW);
+		laserH=8.0f*GV.aspRatW;
 
-		laserAngle=135.0f;
+		laserAngle=180.0f+135.0f;//135.0f;
+		laserAngleB=135.0f;
 
+		levelX=50.0f*GV.aspRatW;
+		levelY=90.0f*GV.aspRatW;
+		
+		levelDigX = levelX + TH.textsW[TH.Itxtlevel];
+		levelDigY = levelY + ((TH.textsH[TH.Itxtlevel] - TH.textsH[TH.ItxtN]) / 2.0f);
+		
+		scoreX=15.0f*GV.aspRatW;
+		scoreY=0.0f*GV.aspRatW;
+		counterX=scoreX+TH.textsW[TH.ItxtScore];
+		counterY=scoreY;
+		
+		digitW = 42.0f*GV.aspRatW;
+		
+		digitY = counterY + ((TH.textsH[TH.ItxtCounter]-TH.textsH[TH.ItxtN]) / 2.0f);
 
-		updateAnimSpeeds();
-
+		updateAnimSpeeds();		
 
 	}
 
@@ -956,38 +882,19 @@ public class GameScreen implements Screen, InputProcessor {
 		int p;
 
 		GV.s.score += (GV.s.numTribsToPop*5)*(GV.s.level*5);
-		scoreString="Score "+GV.s.score;
-		/*
-		for (p=0;p<GV.s.numTribsToPop;p++) {
-			GV.s.poppedTribType[GV.s.numPoppedTribs+p]=GV.s.board[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]];
-			GV.s.poppedTribX[GV.s.numPoppedTribs+p]=bX+GV.s.boardX[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]];
-			GV.s.poppedTribY[GV.s.numPoppedTribs+p]=bY+GV.s.boardY[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]];
-			GV.s.poppedTribRotation[GV.s.numPoppedTribs+p]=0.0f;
-			if (MathUtils.randomBoolean()) GV.s.poppedTribXDInc [GV.s.numPoppedTribs+p]=MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed); else GV.s.poppedTribXDInc [GV.s.numPoppedTribs+p]=0.0f-MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed);
-			if (MathUtils.randomBoolean()) GV.s.poppedTribYDInc [GV.s.numPoppedTribs+p]=MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed); else GV.s.poppedTribYDInc [GV.s.numPoppedTribs+p]=0.0f-MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed);
-			if (MathUtils.randomBoolean()) GV.s.poppedTRotationSpdInc [GV.s.numPoppedTribs+p]=MathUtils.random (poppedTribRotationSpeed*0.25f,poppedTribRotationSpeed); else GV.s.poppedTRotationSpdInc [GV.s.numPoppedTribs+p]=0.0f-MathUtils.random (poppedTribRotationSpeed*0.25f,poppedTribRotationSpeed);
-
-			if (MathUtils.randomBoolean()) GV.s.poppedTribXD [GV.s.numPoppedTribs+p]=(MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed)*20.0f); else GV.s.poppedTribXD [GV.s.numPoppedTribs+p]=0.0f-(MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed)*20.0f);
-			if (MathUtils.randomBoolean()) GV.s.poppedTribYD [GV.s.numPoppedTribs+p]=(MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed)*20.0f); else GV.s.poppedTribYD [GV.s.numPoppedTribs+p]=0.0f-(MathUtils.random (poppedTribSpeed*0.25f,poppedTribSpeed)*20.0f);
-			if (MathUtils.randomBoolean()) GV.s.poppedTRotationSpd [GV.s.numPoppedTribs+p]=(MathUtils.random (poppedTribRotationSpeed*0.25f,poppedTribRotationSpeed)*20.0f); else GV.s.poppedTRotationSpd [GV.s.numPoppedTribs+p]=0.0f-(MathUtils.random (poppedTribRotationSpeed*0.25f,poppedTribRotationSpeed)*20.0f);
-
-
-		}
-
-		GV.s.numPoppedTribs+=GV.s.numTribsToPop;
-
-		for (p=0;p<GV.s.numTribsToPop;p++) {
-			GV.s.board[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]]=GV.s.numTribTypes+1;
-		}
-
-
-		 */
+		calcDigits();
 
 		for (p=0;p<GV.s.numTribsToPop;p++) {
 			GV.s.boardState[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]]=5;
 			GV.s.spawnFade[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]]=1.0f;
 			GV.s.boardStateTimer[GV.s.tribsToPopX[p]] [GV.s.tribsToPopY[p]]=0;
 		}
+		
+		GV.s.laserX[GV.s.numLaser]=laserX;
+		GV.s.laserW[GV.s.numLaser]=0.0f;
+		GV.s.laserD[GV.s.numLaser]=false;
+		GV.s.numLaser++;
+		
 		GV.s.numTribsToPop=0;
 
 
@@ -996,12 +903,7 @@ public class GameScreen implements Screen, InputProcessor {
 	private void doLevel () {
 		int p,t;
 		GV.s.level ++;
-
-		levelString = "Level "+GV.s.level;
-
-		bfD.setScale (scoreTextScale);
-		gl = new GlyphLayout (TH.bf, levelString);
-		levelX=GV.w-gl.width;
+		calcLevelDigits();
 
 		updateAnimSpeeds();
 
@@ -1128,6 +1030,46 @@ public class GameScreen implements Screen, InputProcessor {
 		}
 
 	}
+
+	private void calcDigits () {
+		int p, div;
+		long nScore;
+		nScore=GV.s.score;
+		div = 10000000;
+		
+		largestDig=9;
+		
+		for (p=0;p<8;p++) {
+			if ((int) (nScore / div) > 0 || p>largestDig) {
+				digits[p]=(int) (nScore / div);
+				if (largestDig>p) largestDig=p;
+				nScore = nScore - (digits[p] * div);
+				
+			}
+			div = div / 10;
+		}
+		if (largestDig>7) largestDig=7;
+	}
 	
+	private void calcLevelDigits () {
+		int p, div;
+		long nScore;
+		nScore=GV.s.level;
+		div = 1000;
+		
+		largestLevelDig=6;
+		
+		for (p=0;p<4;p++) {
+			if ((int) (nScore / div) > 0 || p>largestLevelDig) {
+				levelDigits[p]=(int) (nScore / div);
+				if (largestLevelDig>p) largestLevelDig=p;
+				nScore = nScore - (levelDigits[p] * div);
+				
+			}
+			div = div / 10;
+		}
+		if (largestLevelDig==0) levelDigits[3]=GV.s.level;
+		if (largestLevelDig>4) largestLevelDig=4;
+	}
 
 }

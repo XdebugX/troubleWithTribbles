@@ -9,7 +9,7 @@ public class Options implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public boolean sfxOn,musicOn;
+	public boolean sfxOn,musicOn,loginGP;
 	
 	public boolean futureUseBools[];
 	
@@ -30,6 +30,7 @@ public class Options implements Serializable {
 		
 		sfxOn=true;
 		musicOn=true;
+		loginGP=true;
 	}
 
 }

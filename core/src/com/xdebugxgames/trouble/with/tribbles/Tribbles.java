@@ -10,6 +10,7 @@ public class Tribbles extends Game implements ApplicationListener {
 	public GameScreen gameScreen;
 	public CreditsScreen creditsScreen;
 	public OptionsScreen optionsScreen;
+	public StartScreen startScreen;
     public IActivityRequestHandler myRequestHandler;
 
     public Tribbles (IActivityRequestHandler handler) {
@@ -24,6 +25,7 @@ public class Tribbles extends Game implements ApplicationListener {
 		gameScreen = new GameScreen (this);
 		creditsScreen = new CreditsScreen (this);
 		optionsScreen = new OptionsScreen (this);
+		startScreen = new StartScreen (this);
 		
 		
 		GV.opts = saveOptions.loadOptions();
@@ -46,6 +48,7 @@ public class Tribbles extends Game implements ApplicationListener {
 		if (mmScreen!=null) mmScreen.dispose();
 		if (creditsScreen!=null) creditsScreen.dispose();
 		if (optionsScreen!=null) optionsScreen.dispose();
+		if (startScreen!=null) startScreen.dispose();
 		TH.dispose();	  
 	}
 
