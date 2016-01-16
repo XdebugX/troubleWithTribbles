@@ -10,21 +10,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
-public class OptionsScreen implements Screen, InputProcessor {
+public class GameOverScreen implements Screen, InputProcessor {
 
 	Tribbles game;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
 	private boolean clicked,paused;
 
-	private static float pausedX,pausedY,btnsX,btnsY[],btnsTX[],btnsTY[],optTX,optTY,btnSpac;
-	private static int p,selectBlobI,selection,numButtons,btnsTxt[],whatKind,whatText;
+	private static float pausedX,pausedY,btnsX,btnsY,btnsTX,btnsTY,titleTxtX,titleTxtY,spacing,finalScoreX,finalScoreY,totalTribX,totalTribY,digX,digitW,levelDigX,digitY,levelDigY;
+	private static int p,selectBlobI,selection,numButtons,btnsTxt,largestLevelDig,largestDig,digits[],levelDigits[];
 	private static boolean doBack,selectBlobOn;
 
 
 
 	// constructor to keep a reference to the main Game class
-	public OptionsScreen (Tribbles game) {
+	public GameOverScreen (Tribbles game) {
 		this.game = game;
 	}
 
@@ -50,105 +50,39 @@ public class OptionsScreen implements Screen, InputProcessor {
 
 		} else {
 
-			batch.draw(TH.texts[TH.ItxtOptT], optTX, optTY, TH.textsW[TH.ItxtOptT], TH.textsH[TH.ItxtOptT]);
-
-			for (p=0;p<numButtons;p++) {
-				if (p==0) if (!GV.opts.sfxOn) {
-					whatKind=TH.ItxtBtnGrn;
-					whatText = TH.ItxtSoundOn;
-				} else {
-					whatKind=TH.ItxtBtnRed;
-					whatText = TH.ItxtSoundOff;
-				}
-				if (p==1) if (!GV.opts.musicOn) {
-					whatKind=TH.ItxtBtnGrn;  
-					whatText = TH.ItxtMusOn;
-				} else {
-					whatKind=TH.ItxtBtnRed;
-					whatText = TH.ItxtMusOff;
-				}
-
-				if (GV.isAndroid) {
-					if (p==2) if (GV.opts.loginGP) {
-						whatKind=TH.ItxtBtnRed;  
-						whatText = TH.ItxtLogout;
-
-					} else {
-						whatKind=TH.ItxtBtnGrn;
-						whatText = TH.ItxtLogin;
-					}
-
-					if (p==3) {
-						whatKind=TH.ItxtBtnBlu;
-						whatText = TH.ItxtDone;
-					}
-				} else {
-					if (p==2) {
-						whatKind=TH.ItxtBtnBlu;
-						whatText = TH.ItxtDone;						
-					}
-				}
-
-
 				if (selectBlobI==p && selectBlobOn) batch.setColor(0.5f,0.5f,0.5f,1.0f); else batch.setColor (Color.WHITE); 
-				batch.draw(TH.texts[whatKind], btnsX, btnsY[p], TH.textsW[whatKind], TH.textsH[whatKind]);
-				batch.draw(TH.texts[whatText], btnsTX[p], btnsTY[p], TH.textsW[whatText], TH.textsH[whatText]);
+				batch.draw(TH.texts[TH.ItxtBtnBlu], btnsX, btnsY, TH.textsW[TH.ItxtBtnBlu], TH.textsH[TH.ItxtBtnBlu]);
+				batch.draw(TH.texts[TH.ItxtDone], btnsTX, btnsTY, TH.textsW[TH.ItxtDone], TH.textsH[TH.ItxtDone]);
 
 			}
-			batch.setColor (Color.WHITE);
-
-			/*
-			bfD.setScale(optionsTextScale);
-
-			for (p=0;p<numTexts;p++) {
-				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-				batch.draw(TH.texts[TH.ItxtPixel], textX[p], textY[p], textW[p],textH[p]);
-				batch.setColor (Color.WHITE);
-
-				if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); else TH.bf.setColor(Color.GOLD);
-				TH.bf.draw(batch, optionsText[p], textX[p], textY[p]);
+		batch.setColor (Color.WHITE);
+		
+		batch.draw(TH.texts[TH.ItxtGameOver], titleTxtX, titleTxtY, TH.textsW[TH.ItxtGameOver], TH.textsH[TH.ItxtGameOver]);
+		batch.draw(TH.texts[TH.ItxtTotalTrib], totalTribX, totalTribY, TH.textsW[TH.ItxtTotalTrib], TH.textsH[TH.ItxtTotalTrib]);
+		batch.draw(TH.texts[TH.ItxtFinalScore], finalScoreX, finalScoreY, TH.textsW[TH.ItxtFinalScore], TH.textsH[TH.ItxtFinalScore]);
+		
+		batch.setColor (Color.BLUE);
+		for (p=largestDig;p<8;p++) {
+			batch.draw(TH.texts[TH.ItxtN+digits[p]], digX+(digitW*(p-largestDig))+((digitW-(TH.textsW[TH.ItxtN+digits[p]])*2.0f)/2.0f), digitY, TH.textsW[TH.ItxtN+digits[p]]*2.0f, TH.textsH[TH.ItxtN+digits[p]]*2.0f);
 			}
-			 */
+		
+		for (p=largestLevelDig;p<5;p++) {
+			batch.draw(TH.texts[TH.ItxtN+levelDigits[p]], levelDigX+(digitW*(p-largestLevelDig))+((digitW-(TH.textsW[TH.ItxtN+levelDigits[p]]*2.0f))/2.0f), levelDigY, TH.textsW[TH.ItxtN+levelDigits[p]]*2.0f, TH.textsH[TH.ItxtN+levelDigits[p]]*2.0f);
 		}
 
+		batch.setColor(Color.WHITE);
+		
 		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
 		if (clicked) {
 			clicked=false;
-			if (selection==0) {
-				GV.opts.sfxOn=!GV.opts.sfxOn;
-				saveOptions.save(GV.opts);
-			}
-
-			if (selection==1) {
-				GV.opts.musicOn=!GV.opts.musicOn;
-				saveOptions.save(GV.opts);
-			}
-
-
-			if (GV.isAndroid) { 
-				if (selection==2) {
-					GV.opts.loginGP=!GV.opts.loginGP;
-					saveOptions.save(GV.opts);
-					if (GV.opts.loginGP) game.myRequestHandler.sendMsg("loginGP"); else game.myRequestHandler.sendMsg("logoutGP");
-				}
-				if (selection==3) doBack=true;
-			} else {
-				if (selection==2) doBack=true;
-			}
-
-			if (selection==1) {
-				if (GV.opts.musicOn) {
-					if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
-				}
-				else {
-					for (p=0;p<TH.numMusic;p++) if (TH.loopingMusic!=null) if (TH.loopingMusic[p]!=null) TH.loopingMusic[p].stop();				
-				}
-			}
-
+			selectBlobI=10;
+			selectBlobOn=false;
+			if (selection==0) game.setScreen (game.mmScreen);
+		
 		}
-
+		
 		if (doBack) {
 			doBack=false;
 			game.setScreen(game.mmScreen);
@@ -177,9 +111,14 @@ public class OptionsScreen implements Screen, InputProcessor {
 		Gdx.input.setInputProcessor(this);
 		Gdx.input.setCatchBackKey(true);		
 
-		sizes();		
 		clicked=false;
 		doBack=false;
+		
+		digits=new int [8];
+		levelDigits= new int [5];
+				
+		sizes();		
+
 
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
@@ -237,7 +176,7 @@ public class OptionsScreen implements Screen, InputProcessor {
 
 		if (!paused) {
 			for (p=0;p<numButtons;p++) {
-				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>btnsY[p] && y<btnsY[p]+TH.textsH[TH.ItxtBtnBlu]) {
+				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>btnsY && y<btnsY+TH.textsH[TH.ItxtBtnBlu]) {
 					selectBlobI=p;
 					selectBlobOn=true;
 				}
@@ -266,7 +205,7 @@ public class OptionsScreen implements Screen, InputProcessor {
 		if (!paused) {
 				selectBlobOn=false;
 				for (p=0;p<numButtons;p++) {
-					if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>btnsY[p] && y<btnsY[p]+TH.textsH[TH.ItxtBtnBlu] && selectBlobI==p) {
+					if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>btnsY && y<btnsY+TH.textsH[TH.ItxtBtnBlu] && selectBlobI==p) {
 						selectBlobOn=true;
 					}
 				}
@@ -297,29 +236,34 @@ public class OptionsScreen implements Screen, InputProcessor {
 		pausedX=(GV.w-TH.textsW[TH.ItxtPaused]) / 2.0f;
 		pausedY=(GV.h-TH.textsH[TH.ItxtPaused]) / 2.0f;
 
-		numButtons=3;
-		btnsTxt = new int [] {TH.ItxtSoundOn, TH.ItxtMusOn, TH.ItxtDone};
+		numButtons=1;
+		btnsTxt = TH.ItxtDone;
 
-		if (GV.isAndroid) {
-			numButtons=4;
-			btnsTxt = new int [] {TH.ItxtSoundOn, TH.ItxtMusOn, TH.ItxtLogin, TH.ItxtDone};
-		}
-
-		optTX = (GV.w-TH.textsW[TH.ItxtOptT]) / 2.0f;
-		optTY = GV.h*0.05f;
+		titleTxtX = (GV.w-TH.textsW[TH.ItxtGameOver] ) / 2.0f;
+		titleTxtY = GV.h*0.05f;
+		
+		totalTribX = (GV.w-TH.textsW[TH.ItxtTotalTrib]) / 2.0f;
+		spacing = (GV.h-titleTxtY-TH.textsH[TH.ItxtBtnBlu] ) / 3.5f;
+		totalTribY = titleTxtY+spacing;
+		
+		finalScoreX = (GV.w-TH.textsW[TH.ItxtFinalScore]) / 2.0f;
+		finalScoreY = totalTribY+spacing;
 
 		btnsX = (GV.w-TH.textsW[TH.ItxtBtnBlu]) / 2.0f;
-		btnsY = new float [numButtons];
-		btnsTX = new float [numButtons];
-		btnsTY = new float [numButtons];
+		btnsY = finalScoreY+spacing; 
+		btnsTX = (GV.w-TH.textsW[btnsTxt]) / 2.0f;
+		btnsTY = btnsY + ((TH.textsH[TH.ItxtBtnBlu]-TH.textsH[TH.ItxtDone]) / 2.0f);
 
-		btnSpac = (GV.h - optTY - TH.textsH[TH.ItxtOptT]) / (numButtons+1);
+		calcDigits();
+		calcLevelDigits();
 
-		for (p=0;p<numButtons;p++) {
-			btnsY[p] = optTY + TH.textsH[TH.ItxtOpt] + ((p+1) * btnSpac);
-			btnsTX[p] = (GV.w - TH.textsW[btnsTxt[p]]) / 2.0f;
-			btnsTY[p] = btnsY[p] + ((TH.textsH[TH.ItxtBtnBlu]-TH.textsH[btnsTxt[p]]) / 2.0f); 
-		}
+		digitW = 84.0f*GV.aspRatW;
+		
+		digitY = finalScoreY+TH.textsH[TH.ItxtFinalScore]+(GV.h*0.05f);
+		levelDigY = totalTribY + TH.textsH[TH.ItxtTotalTrib] + (GV.h*0.05f);
+		
+		digX = (GV.w - (digitW*(8-largestDig))) / 2.0f;
+		levelDigX = (GV.w - (digitW*(5-largestLevelDig))) / 2.0f;
 
 
 	}
@@ -329,6 +273,47 @@ public class OptionsScreen implements Screen, InputProcessor {
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
 	}
 
+	
+	private void calcDigits () {
+		int p, div;
+		long nScore;
+		nScore=GV.s.score;
+		div = 10000000;
+		
+		largestDig=9;
+		
+		for (p=0;p<8;p++) {
+			if ((int) (nScore / div) > 0 || p>largestDig) {
+				digits[p]=(int) (nScore / div);
+				if (largestDig>p) largestDig=p;
+				nScore = nScore - (digits[p] * div);
+				
+			}
+			div = div / 10;
+		}
+		if (largestDig>7) largestDig=7;
+	}
+	
+	private void calcLevelDigits () {
+		int p, div;
+		long nScore;
+		nScore=GV.s.totalTribTrans;
+		div = 10000;
+		
+		largestLevelDig=6;
+		
+		for (p=0;p<5;p++) {
+			if ((int) (nScore / div) > 0 || p>largestLevelDig) {
+				levelDigits[p]=(int) (nScore / div);
+				if (largestLevelDig>p) largestLevelDig=p;
+				nScore = nScore - (levelDigits[p] * div);
+				
+			}
+			div = div / 10;
+		}
+		if (largestLevelDig==0) levelDigits[4]=GV.s.totalTribTrans;
+		if (largestLevelDig>4) largestLevelDig=4;
+	}
 
 
 }

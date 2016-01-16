@@ -17,7 +17,7 @@ public class StartScreen implements Screen, InputProcessor {
 	private boolean clicked,paused;
 	
  
-	private static float pausedX,pausedY,logoX,logoY,doorLX,doorLY,doorRX,doorRY,btnX,btnY,wallX,wallY,openAmt,openAmtInc;
+	private static float pausedX,pausedY,logoX,logoY,doorLX,doorLY,doorRX,doorRY,btnX,btnY,wallX,wallY,openAmt,openAmtInc,scale;
 	private static long pauseTime;
 	private static boolean doorOpen;
 	
@@ -40,10 +40,10 @@ public class StartScreen implements Screen, InputProcessor {
 			batch.draw(TH.texts[TH.ItxtPlanet], GV.planetX, GV.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
 			batch.draw(TH.texts[TH.ItxtSatt], GV.sattX, GV.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
 			
-			batch.draw(TH.texts[TH.ItxtStartDoorL], doorLX-openAmt, doorLY, TH.textsW[TH.ItxtStartDoorL], TH.textsH[TH.ItxtStartDoorL]);
-			batch.draw(TH.texts[TH.ItxtStartDoorR], doorRX+openAmt, doorRY, TH.textsW[TH.ItxtStartDoorR], TH.textsH[TH.ItxtStartDoorR]);
-			batch.draw(TH.texts[TH.ItxtStartBtn], btnX-openAmt, btnY, TH.textsW[TH.ItxtStartBtn], TH.textsH[TH.ItxtStartBtn]);
-			batch.draw(TH.texts[TH.ItxtStartWall], wallX, wallY, TH.textsW[TH.ItxtStartWall], TH.textsH[TH.ItxtStartWall]);
+			batch.draw(TH.texts[TH.ItxtStartDoorL], doorLX-openAmt, doorLY, TH.textsW[TH.ItxtStartDoorL] / 2.0f, TH.textsH[TH.ItxtStartDoorL] / 2.0f, TH.textsW[TH.ItxtStartDoorL], TH.textsH[TH.ItxtStartDoorL], scale, scale, 0.0f);
+			batch.draw(TH.texts[TH.ItxtStartDoorR], doorRX+openAmt, doorRY, TH.textsW[TH.ItxtStartDoorR] / 2.0f, TH.textsH[TH.ItxtStartDoorR] / 2.0f,TH.textsW[TH.ItxtStartDoorR], TH.textsH[TH.ItxtStartDoorR], scale, scale, 0.0f);
+			batch.draw(TH.texts[TH.ItxtStartBtn], btnX-openAmt, btnY, TH.textsW[TH.ItxtStartBtn]/2.0f, TH.textsH[TH.ItxtStartBtn]/2.0f, TH.textsW[TH.ItxtStartBtn], TH.textsH[TH.ItxtStartBtn], scale, scale, 0.0f);
+			batch.draw(TH.texts[TH.ItxtStartWall], wallX, wallY, TH.textsW[TH.ItxtStartWall]/2.0f, TH.textsH[TH.ItxtStartWall]/2.0f, TH.textsW[TH.ItxtStartWall], TH.textsH[TH.ItxtStartWall], scale, scale, 0.0f);
 			batch.draw(TH.texts[TH.ItxtLogo], logoX, logoY, TH.textsW[TH.ItxtLogo], TH.textsH[TH.ItxtLogo]);
 
 			if (paused) {
@@ -62,8 +62,9 @@ public class StartScreen implements Screen, InputProcessor {
 		}
 		
 		if (doorOpen) {
-			openAmt+=openAmtInc*delta;
-			if (openAmt>GV.w/2.0f) game.setScreen(game.mmScreen);
+			openAmt+=openAmtInc*delta*scale;
+			scale+=0.5f*delta;
+			if (openAmt>GV.w/2.0f*scale) game.setScreen(game.mmScreen);
 		}
 	}
 
@@ -187,6 +188,8 @@ public class StartScreen implements Screen, InputProcessor {
 		btnY=697.0f*GV.aspRatW;
 		
 		openAmtInc=GV.w/2.0f;
+		
+		scale=1.0f;
 		
 }
 	

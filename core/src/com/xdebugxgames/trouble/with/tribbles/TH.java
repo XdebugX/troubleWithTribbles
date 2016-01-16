@@ -17,7 +17,7 @@ public class TH {
 	public static TextureAtlas atlasGame,atlasMenu;
 	private static Array <AtlasRegion>  aa;
 	
-	 public static final int numTextures = 57, numAnimations = 17, numMusic=1, numSfxs=20;
+	 public static final int numTextures = 64, numAnimations = 17, numMusic=1, numSfxs=21;
 	 public static TextureRegion texts[],strips[];
 	 public static float textsW[],textsH[],stripsW[],stripsH[],animW[],animH[];
 	 public static BitmapFont bf;
@@ -25,8 +25,8 @@ public class TH {
 	 public static Sound sfxs[];
 	 public static final int ImusicMM=0;
 	 public static final String loopingMusicFN[] = {"Pamgaea.mp3"};
-	 public static final String sfxsFN[] = {"woot_01.mp3","woot_02.mp3","woot_03.mp3","woot_04.mp3","woot_05.mp3","woot_06.mp3","woot_07.mp3","woot_08.mp3","woot_09.mp3","woot_10.mp3","woot_11.mp3","woot_12.mp3","woot_13.mp3","woot_14.mp3","woot_15.mp3","woot_16.mp3","woot_17.mp3","woot_18.mp3","woot_19.mp3","transport.mp3"};
-	 public static final int IsfxWoots=0,IsfxNumWoots=19,IsfxTransport=19;
+	 public static final String sfxsFN[] = {"woot_01.mp3","woot_02.mp3","woot_03.mp3","woot_04.mp3","woot_05.mp3","woot_06.mp3","woot_07.mp3","woot_08.mp3","woot_09.mp3","woot_10.mp3","woot_11.mp3","woot_12.mp3","woot_13.mp3","woot_14.mp3","woot_15.mp3","woot_16.mp3","woot_17.mp3","woot_18.mp3","woot_19.mp3","transport.mp3","ut_oh.mp3"};
+	 public static final int IsfxWoots=0,IsfxNumWoots=19,IsfxTransport=19,IsfxUtOh=20;
 	 public static final String animFN[] = {"BlueBall_blink","RedBall_blink","OrangeBall_blink","GreenBall_blink",
 		 									"BlueBall_spawn","RedBall_spawn","OrangeBall_spawn","GreenBall_spawn",
 		 									"BlueBall_wiggle","RedBall_wiggle","OrangeBall_wiggle","GreenBall_wiggle",
@@ -40,8 +40,8 @@ public class TH {
 	 public static final String textsFN[]={"BlueBall_idle","RedBall_idle","OrangeBall_idle","GreenBall_idle",
 		 								   "corridorBack","doorLeft","doorRight","top","bottom","sideRight","doorFrame","window","score","counter","level","levelClear","paused","n0","n1","n2","n3","n4","n5","n6","n7","n8","n9","pixel"};
 	 
-	 public static final String textsMFN [] = {"achv","back","btnBlue","btnGreen","btnRed","cont","credits","leader","login","logout","musicOff","musicOn","new","no","opt","optionsTitle","our","share","sndOff","sndOn","sure","yes","planet","satt","logo","startBtn","startDoorL","startDoorR","startWall"};
-	 public static final int ItxtAch=startMenus,ItxtBack=startMenus+1,ItxtBtnBlu=startMenus+2,ItxtBtnGrn=startMenus+3,ItxtBtnRed=startMenus+4,ItxtCont=startMenus+5,ItxtCred=startMenus+6,ItxtLdr=startMenus+7,ItxtLogin=startMenus+8,ItxtLogout=startMenus+9,ItxtMusOff=startMenus+10,ItxtMusOn=startMenus+11,ItxtNew=startMenus+12,ItxtNo=startMenus+13,ItxtOpt=startMenus+14,ItxtOptT=startMenus+15,ItxtOur=startMenus+16,ItxtShare=startMenus+17,ItxtSoundOff=startMenus+18,ItxtSoundOn=startMenus+19,ItxtSure=startMenus+20,ItxtYes=startMenus+21,ItxtPlanet=startMenus+22,ItxtSatt=startMenus+23,ItxtLogo=startMenus+24,ItxtStartBtn=startMenus+25,ItxtStartDoorL=startMenus+26,ItxtStartDoorR=startMenus+27,ItxtStartWall=startMenus+28;
+	 public static final String textsMFN [] = {"achv","back","btnBlue","btnGreen","btnRed","cont","credits","leader","login","logout","musicOff","musicOn","new","no","opt","optionsTitle","our","share","sndOff","sndOn","sure","yes","planet","satt","logo","startBtn","startDoorL","startDoorR","startWall","gameplayType","classic","ctl","done","finalScore","totalTribbles","gameOver"};
+	 public static final int ItxtAch=startMenus,ItxtBack=startMenus+1,ItxtBtnBlu=startMenus+2,ItxtBtnGrn=startMenus+3,ItxtBtnRed=startMenus+4,ItxtCont=startMenus+5,ItxtCred=startMenus+6,ItxtLdr=startMenus+7,ItxtLogin=startMenus+8,ItxtLogout=startMenus+9,ItxtMusOff=startMenus+10,ItxtMusOn=startMenus+11,ItxtNew=startMenus+12,ItxtNo=startMenus+13,ItxtOpt=startMenus+14,ItxtOptT=startMenus+15,ItxtOur=startMenus+16,ItxtShare=startMenus+17,ItxtSoundOff=startMenus+18,ItxtSoundOn=startMenus+19,ItxtSure=startMenus+20,ItxtYes=startMenus+21,ItxtPlanet=startMenus+22,ItxtSatt=startMenus+23,ItxtLogo=startMenus+24,ItxtStartBtn=startMenus+25,ItxtStartDoorL=startMenus+26,ItxtStartDoorR=startMenus+27,ItxtStartWall=startMenus+28,ItxtGameType=startMenus+29,ItxtClassic=startMenus+30,ItxtCTL=startMenus+31,ItxtDone=startMenus+32,ItxtFinalScore=startMenus+33,ItxtTotalTrib=startMenus+34,ItxtGameOver=startMenus+35;
 	 public static final String stripsFN[]={"20","30","40"};
 	 public static final int menuItems[] ={};
 	 public static final int multiples[] ={11,12,13};

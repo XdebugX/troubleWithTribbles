@@ -2,7 +2,7 @@ package com.xdebugxgames.trouble.with.tribbles;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.utils.Base64Coder;
+//import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.Json;
 
 
@@ -15,7 +15,7 @@ public class Save {
 			Json json = new Json();
 
 			String gameData = json.toJson( s );
-			gameData = Base64Coder.encodeString( gameData );
+//			gameData = Base64Coder.encodeString( gameData );
 
 			FileHandle handle = Gdx.files.local("saveGame.sav");
 			handle.writeString(gameData, false);
@@ -30,24 +30,11 @@ public class Save {
 			FileHandle handle = Gdx.files.local("saveGame.sav");
 			try {
 			gameData = handle.readString();
-			gameData = Base64Coder.decodeString( gameData );
+			//gameData = Base64Coder.decodeString( gameData ); 
 			s = (SavedGame) json.fromJson( SavedGame.class, gameData );
 			} catch (Exception e) {};
 		}//local files available;
 		return (s);
 	}
 	
-	/*
-    public static byte[] serialize(Object obj) {
-    		try {
-	        ByteArrayOutputStream b = new ByteArrayOutputStream();
-	        ObjectOutputStream o = new ObjectOutputStream(b);
-	        o.writeObject(obj);
-	        return b.toByteArray();
-    		} catch (IOException e) {
-    			System.out.println ("IOException "+e);
-    			return null;
-    		}
-	}
-	*/
 }

@@ -19,12 +19,12 @@ public class SavedGame implements Serializable {
 	
 	public float futureUseFloats[];
 	
-	public int board [] [],level,spawnRow[],boardW,boardH,numTribTypes,spawnRowI,spawnRowState[],boardState [] [],wTX,wTY,neededForMatch,tribsToPopX[],tribsToPopY[],numTribsToPop,gameType,numLaser;
+	public int board [] [],level,spawnRow[],boardW,boardH,numTribTypes,spawnRowI,spawnRowState[],boardState [] [],wTX,wTY,neededForMatch,tribsToPopX[],tribsToPopY[],numTribsToPop,gameType,numLaser,totalTribTrans;
 	
 	public long spawnRowTimer,spawnInterval,wiggleInt,shutInt,score,levelThresholds[],transportInt,pauseTime;
 	
 	public float spawnRowStateTimer[],boardStateTimer[][],boardX[][],boardY[][],boardSpeed[][],spawnFade[][],spawnRowFade[],laserX[],laserW[];	
-	public boolean tribTouched,tribBreeding,doClearAni,clearAniDone,paused,laserD[];
+	public boolean tribTouched,tribBreeding,doClearAni,clearAniDone,paused,laserD[],gameOver;
 	
 	
 	

@@ -17,13 +17,10 @@ public class MMScreen implements Screen, InputProcessor {
 	Tribbles game;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame,selectGameType,paused;
-	private int selectBlobI,selection,p,numMenuStrings,numGameType,numBtns,btnsTexts[],btnsTextsSure[];
-	private static GlyphLayout gl;
-	private static BitmapFontData bfD;
-	private static float gameTypeScale,gameTypeStringsX[],gameTypeStringsW[],gameTypeStringsH[],gameTypeStringsY[],pausedX,pausedY,btnsX,btnsSpac,btnsY,btnsTextsOffY[],btnsTextsOffX[],surePX,surePY,btnsTextsOffYSure[],btnsTextsOffXSure[];
-	private static final String [] gameTypeStrings = {"Select gameplay type:","Endless","Clear the level"};
-
+	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame,selectGameType,paused,stretchIn,pullIn;
+	private int selectBlobI,selection,p,numMenuStrings,numGameType,numBtns,btnsTexts[],btnsTextsSure[],btnsTextsGP[];
+	private static float logoH,pausedX,pausedY,btnsX,btnsSpac,btnsY,btnsTextsOffY[],btnsTextsOffX[],surePX,surePY,btnsTextsOffYSure[],btnsTextsOffXSure[],btnsTextsOffYGP[],btnsTextsOffXGP[],gameTypeX,gameTypeY,logoX,logoY,btnXOff,btnYOff,btnScaleOff,btnAlpha;
+	
 
 
 	// constructor to keep a reference to the main Game class
@@ -44,6 +41,7 @@ public class MMScreen implements Screen, InputProcessor {
 		batch.draw(TH.texts[TH.ItxtBack], 0, 0, TH.textsW[TH.ItxtBack], TH.textsH[TH.ItxtBack]);
 		batch.draw(TH.texts[TH.ItxtPlanet], GV.planetX, GV.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
 		batch.draw(TH.texts[TH.ItxtSatt], GV.sattX, GV.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
+		batch.draw(TH.texts[TH.ItxtLogo], logoX, logoY, TH.textsW[TH.ItxtLogo], TH.textsH[TH.ItxtLogo]);
 		
 		if (paused) {
 			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
@@ -57,33 +55,27 @@ public class MMScreen implements Screen, InputProcessor {
 			for (p=0;p<2;p++) {
 				if (selectBlobI==p && selectBlobOn) batch.setColor(0.5f,0.5f,0.5f,1.0f); else batch.setColor (Color.WHITE); 
 				batch.draw (TH.texts[TH.ItxtBtnBlu], btnsX, surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac), TH.textsW[TH.ItxtBtnBlu], TH.textsH[TH.ItxtBtnBlu]);
-				batch.draw (TH.texts[btnsTextsSure[p]], btnsTextsOffXSure[p], btnsTextsOffYSure[p], TH.textsW[btnsTextsSure[p]], TH.textsH[btnsTextsSure[p]]);
+				batch.draw (TH.texts[btnsTextsSure[p]], btnsTextsOffXSure[p], btnsTextsOffYSure[p],TH.textsW[btnsTextsSure[p]], TH.textsH[btnsTextsSure[p]]);
 			}
 			batch.setColor (Color.WHITE);
 			
 		} else if (selectGameType) {
-
-			bfD.setScale(gameTypeScale);
-
-			for (p=0;p<numGameType;p++) {
-				
-				batch.setColor (22.0f/255.0f,45.0f/255.0f,73.0f/255.0f,0.7f);
-				batch.draw(TH.texts[TH.ItxtPixel], gameTypeStringsX[p], gameTypeStringsY[p], gameTypeStringsW[p], gameTypeStringsH[p]);
-				batch.setColor(Color.WHITE);
-
-				
-					TH.bf.setColor(Color.GOLD);
-					if (selectBlobOn && selectBlobI==p) TH.bf.setColor(Color.DARK_GRAY); 
-					TH.bf.draw(batch, gameTypeStrings[p], gameTypeStringsX[p], gameTypeStringsY[p]);
+			
+			batch.draw (TH.texts[TH.ItxtGameType],gameTypeX,gameTypeY,TH.textsW[TH.ItxtGameType], TH.textsH[TH.ItxtGameType]);
+			for (p=0;p<2;p++) {
+				if (selectBlobI==p && selectBlobOn) batch.setColor(0.5f,0.5f,0.5f,1.0f); else batch.setColor (Color.WHITE); 
+				batch.draw (TH.texts[TH.ItxtBtnBlu], btnsX, gameTypeY+TH.textsH[TH.ItxtGameType]+((p+1)*btnsSpac), TH.textsW[TH.ItxtBtnBlu], TH.textsH[TH.ItxtBtnBlu]);
+				batch.draw (TH.texts[btnsTextsGP[p]], btnsTextsOffXGP[p], btnsTextsOffYGP[p], TH.textsW[btnsTextsGP[p]], TH.textsH[btnsTextsGP[p]]);
 			}
-
+			batch.setColor (Color.WHITE);
 			
 		} else {
 			for (p=0;p<numBtns;p++) {
 				if (!(p==1 && noSavedGame)) {
-					if (selectBlobI==p && selectBlobOn) batch.setColor(0.5f,0.5f,0.5f,1.0f); else batch.setColor (Color.WHITE); 
-					batch.draw(TH.texts[TH.ItxtBtnBlu], btnsX, btnsY + (btnsSpac*p), TH.textsW[TH.ItxtBtnBlu], TH.textsH[TH.ItxtBtnBlu]);
-					batch.draw(TH.texts[btnsTexts[p]], btnsTextsOffX[p], btnsTextsOffY[p], TH.textsW[btnsTexts[p]], TH.textsH[btnsTexts[p]]);
+					batch.setColor(1.0f,1.0f,1.0f,btnAlpha);
+					if (!pullIn && !stretchIn) if (selectBlobI==p && selectBlobOn) batch.setColor(0.5f,0.5f,0.5f,1.0f); else batch.setColor (Color.WHITE);
+					batch.draw(TH.texts[TH.ItxtBtnBlu], btnsX+btnXOff, btnsY + (btnsSpac*p)+btnYOff, TH.textsW[TH.ItxtBtnBlu]/2.0f, TH.textsH[TH.ItxtBtnBlu]/2.0f, TH.textsW[TH.ItxtBtnBlu], TH.textsH[TH.ItxtBtnBlu], btnScaleOff, 1.0f, 0.0f);
+					batch.draw(TH.texts[btnsTexts[p]], btnsTextsOffX[p]+btnXOff, btnsTextsOffY[p]+btnYOff, TH.textsW[btnsTexts[p]]/2.0f, TH.textsH[btnsTexts[p]]/2.0f, TH.textsW[btnsTexts[p]], TH.textsH[btnsTexts[p]], btnScaleOff, 1.0f, 0.0f);
 				}
 			}
 			
@@ -110,7 +102,7 @@ public class MMScreen implements Screen, InputProcessor {
 				}
 
 			} else if (selectGameType) {
-				if (selection ==1) {
+				if (selection == 0) {
 					GV.s = new SavedGame();
 					GV.s.gameType=0;
 					GV.doNewGame();
@@ -118,7 +110,7 @@ public class MMScreen implements Screen, InputProcessor {
 					//for (p=0;p<TH.numMusic;p++) TH.loopingMusic[p].stop();
 					game.setScreen(game.gameScreen);
 				}
-				if (selection == 2) {
+				if (selection == 1) {
 					GV.s = new SavedGame();
 					GV.s.gameType=1;
 					GV.doNewGame();
@@ -131,8 +123,14 @@ public class MMScreen implements Screen, InputProcessor {
 
 				if (selection==0) {
 					GV.s=Save.loadGame();
-					if (GV.s!=null) areYouSure=true; 
+					if (GV.s!=null) {
+						if (!GV.s.gameOver) {
+							areYouSure=true; 
+					}
 					else {
+						selectGameType=true;
+					}
+					} else {
 						selectGameType=true;
 					}
 				}
@@ -140,7 +138,7 @@ public class MMScreen implements Screen, InputProcessor {
 				if (!noSavedGame) if (selection==1) {
 					GV.s=Save.loadGame();
 					//for (p=0;p<TH.numMusic;p++) TH.loopingMusic[p].stop();
-					game.setScreen(game.gameScreen);			
+					if (GV.s.gameOver) game.setScreen (game.gameOverScreen); else game.setScreen(game.gameScreen);
 				}
 				
 				if (selection==2) {
@@ -156,6 +154,28 @@ public class MMScreen implements Screen, InputProcessor {
 		}
 
 
+		if (stretchIn) {
+			btnAlpha+=.15f*delta;
+			btnScaleOff+=1.5f*delta;
+			if (btnScaleOff>2.5f) {
+				pullIn=true;
+				stretchIn=false;
+			}
+		}
+		
+		if (pullIn) {
+			btnAlpha+=0.4f*delta;
+			btnXOff+=(TH.textsW[TH.ItxtBtnBlu])*delta;
+			//btnYOff+=(TH.textsH[TH.ItxtBtnBlu])*delta;
+			btnScaleOff-=1.0f*delta;
+			
+			if (btnXOff>0) btnXOff=0.0f;
+			if (btnYOff>0) btnYOff=0.0f;
+			if (btnScaleOff<1.0f) btnScaleOff=1.0f;
+			if (btnAlpha>1.0f) btnAlpha=1.0f;
+			
+			if (btnXOff==0 && btnYOff==0 && btnScaleOff==1.0f && btnAlpha==1.0f) pullIn=false;
+		}
 
 		if (GV.exit) {
 			//game.setScreen (game.startScreen);
@@ -210,6 +230,18 @@ public class MMScreen implements Screen, InputProcessor {
 		if (GV.s==null) noSavedGame=true;
 		
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
+		
+		if (!GV.warpIn) {
+		btnScaleOff=0.25f;
+		btnXOff=-(TH.textsW[TH.ItxtBtnBlu]);
+		btnYOff=0.0f;//-(TH.textsH[TH.ItxtBtnBlu]);
+		btnAlpha=0.1f;
+		stretchIn=true;
+		pullIn=false;
+		} 
+		
+		GV.warpIn=true;
+		
 	}
 
 	@Override
@@ -281,8 +313,8 @@ public class MMScreen implements Screen, InputProcessor {
 
 		else if (selectGameType) {
 
-			for (p=1;p<3;p++) {
-				if (x>gameTypeStringsX[p] && x<gameTypeStringsX[p]+gameTypeStringsW[p] && y>gameTypeStringsY[p] && y<gameTypeStringsY[p]+gameTypeStringsH[p]) {
+			for (p=0;p<2;p++) {
+				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>gameTypeY+TH.textsH[TH.ItxtGameType]+((p+1)*btnsSpac) && y<gameTypeY+TH.textsH[TH.ItxtGameType]+((p+1)*btnsSpac) + TH.textsH[TH.ItxtBtnBlu]) { 
 					selectBlobI=p;
 					selectBlobOn=true;
 				}
@@ -348,8 +380,8 @@ public class MMScreen implements Screen, InputProcessor {
 		}
 		else if (selectGameType) {
 			
-			for (p=1;p<3;p++) {
-				if (x>gameTypeStringsX[p] && x<gameTypeStringsX[p]+gameTypeStringsW[p] && y>gameTypeStringsY[p] && y<gameTypeStringsY[p]+gameTypeStringsH[p] && selectBlobI==p) {
+			for (p=0;p<2;p++) {
+				if (x>btnsX && x<btnsX+TH.textsW[TH.ItxtBtnBlu] && y>gameTypeY+TH.textsH[TH.ItxtGameType]+((p+1)*btnsSpac) && y<gameTypeY+TH.textsH[TH.ItxtGameType]+((p+1)*btnsSpac) + TH.textsH[TH.ItxtBtnBlu] && selectBlobI==p) { 
 					selectBlobOn=true;
 				}
 			}
@@ -381,49 +413,7 @@ public class MMScreen implements Screen, InputProcessor {
 
 	private void sizes() {
 
-		bfD = TH.bf.getData();
-
-		float a,z;
-		int breaker;
-		
-		a=0;
-		z=0.1f;
-		breaker=0;
-
-		do {
-			z=z+0.1f;
-			bfD.setScale(z);
-			gl = new GlyphLayout (TH.bf,gameTypeStrings[0]);
-			a=gl.width;
-			breaker++;
-		} while (a<GV.w*0.90f && breaker<1500);
-
-		gameTypeScale = z;
-		
-
-
-
-
-		numGameType = gameTypeStrings.length;
-		gameTypeStringsX=new float [numGameType];
-		gameTypeStringsY=new float [numGameType];
-		gameTypeStringsW=new float [numGameType];
-		gameTypeStringsH=new float [numGameType];
-
-
-		float logoH=0;/// change when you have a logo
-		float gameTypeSpacing = (GV.h-logoH) / (numGameType+1);
-
-
-		bfD.setScale(gameTypeScale);
-
-		for (p=0;p<numGameType;p++) {
-			gl = new GlyphLayout (TH.bf,gameTypeStrings[p]);
-			gameTypeStringsX[p]=(GV.w-gl.width)/2.0f;
-			gameTypeStringsY[p]=gameTypeSpacing*(p+1);
-			gameTypeStringsW[p]=gl.width;
-			gameTypeStringsH[p]=bfD.lineHeight;
-		}
+	
 
 		pausedX=(GV.w-TH.textsW[TH.ItxtPaused]) / 2.0f;
 		pausedY=(GV.h-TH.textsH[TH.ItxtPaused]) / 2.0f;
@@ -433,11 +423,15 @@ public class MMScreen implements Screen, InputProcessor {
 		btnsTexts = new int [] {TH.ItxtNew,TH.ItxtCont,TH.ItxtOpt,TH.ItxtCred};
 		
 		if (GV.isAndroid) { 
-			numBtns=8;
-			btnsTexts = new int [] {TH.ItxtNew,TH.ItxtCont,TH.ItxtOpt,TH.ItxtCred, TH.ItxtAch, TH.ItxtLdr,TH.ItxtOur, TH.ItxtShare};
+			numBtns=7;
+			btnsTexts = new int [] {TH.ItxtNew,TH.ItxtCont,TH.ItxtOpt,TH.ItxtCred, TH.ItxtAch, TH.ItxtLdr,TH.ItxtOur};
 
 		}
 
+		logoX=(GV.w-TH.textsW[TH.ItxtLogo]) / 2.0f;
+		logoY=0.0f;
+		logoH=logoY + TH.textsH[TH.ItxtLogo];
+		
 		
 		btnsTextsOffY = new float [numBtns];
 		btnsTextsOffX = new float [numBtns];
@@ -460,7 +454,19 @@ public class MMScreen implements Screen, InputProcessor {
 			btnsTextsOffYSure[p]=surePY+TH.textsH[TH.ItxtSure]+((p+1)*btnsSpac) +((TH.textsH[TH.ItxtBtnBlu]-TH.textsH[btnsTextsSure[p]])/2.0f);
 			btnsTextsOffXSure[p]=(GV.w - TH.textsW[btnsTextsSure[p]]) / 2.0f;
 		}
+
+		gameTypeX=(GV.w-TH.textsW[TH.ItxtGameType]) / 2.0f;
+		gameTypeY=btnsY + GV.h*.05f;
 		
+		btnsTextsOffYGP= new float [2];
+		btnsTextsOffXGP = new float [2];
+		btnsTextsGP = new int [] {TH.ItxtClassic, TH.ItxtCTL};
+
+		for (p=0;p<2;p++) {
+			btnsTextsOffYGP[p]=gameTypeY+TH.textsH[TH.ItxtGameType]+((p+1)*btnsSpac) +((TH.textsH[TH.ItxtBtnBlu]-TH.textsH[btnsTextsGP[p]])/2.0f);
+			btnsTextsOffXGP[p]=(GV.w - TH.textsW[btnsTextsGP[p]]) / 2.0f;
+		}
+
 		
 		
 	}
