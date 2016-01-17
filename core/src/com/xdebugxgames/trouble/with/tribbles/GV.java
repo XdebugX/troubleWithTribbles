@@ -55,8 +55,11 @@ public class GV {
 		GV.s.futureUseBools = new boolean [1000];
 		GV.s.futureUseFloats = new float [1000];
 		GV.s.futureUseInts = new int [1000];
-		GV.s.futureUseLongs = new long [1000];
+		GV.s.futureUseLongs = new int [1000];
 		GV.s.futureUseStrings = new String [1000];
+		
+		GV.s.paused=false;
+		GV.s.pauseTime=0;
 		
 		s.boardW=8;
 		s.boardH=13;
@@ -65,8 +68,8 @@ public class GV {
 		s.level=1;
 		GV.s.totalTribTrans=0;
 		GV.s.gameOver=false;
-		GV.s.levelThresholds = new long [1000];
-		for (p=0;p<1000;p++) GV.s.levelThresholds[p] = (long) ((p+1)*100) * ((p+1)*3);
+		GV.s.levelThresholds = new int [1000];
+		for (p=0;p<1000;p++) GV.s.levelThresholds[p] = (int) ((p+1)*100) * ((p+1)*3);
 		s.board = new int [s.boardW] [s.boardH];
 		s.boardState = new int [s.boardW] [s.boardH];
 		s.boardStateTimer = new float [s.boardW] [s.boardH];
@@ -83,7 +86,7 @@ public class GV {
 		s.wiggleInt = 1500;
 		s.shutInt = 500;
 		GV.s.transportInt = 1350;
-		s.spawnRowTimer=System.currentTimeMillis()-s.spawnInterval;
+		s.spawnRowTimer=(int) (System.currentTimeMillis()-s.spawnInterval);
 		s.spawnRowI=0;
 		for (p=0;p<s.boardW;p++) for (t=0;t<s.boardH;t++)  s.board[p][t]=s.numTribTypes+1;
 		for (p=0;p<s.boardW;p++) s.spawnRow[p] = s.numTribTypes+1;

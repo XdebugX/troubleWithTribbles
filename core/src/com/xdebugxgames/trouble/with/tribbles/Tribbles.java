@@ -33,8 +33,16 @@ public class Tribbles extends Game implements ApplicationListener {
 		GV.opts = saveOptions.loadOptions();
 		if (GV.opts==null) {
 			GV.opts = new Options ();
-			GV.opts.musicOn=true;
+			GV.opts.futureUseBools = new boolean [100];
+			GV.opts.futureUseInts = new int [100];
+			GV.opts.futureUseStrings = new String [100];
+			GV.opts.futureUseLongs = new int [100];
+			GV.opts.futureUseFloats = new float [100];
+				
 			GV.opts.sfxOn=true;
+			GV.opts.musicOn=true;
+			GV.opts.loginGP=false;
+			
 			saveOptions.save(GV.opts);
 		}
 		

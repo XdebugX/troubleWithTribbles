@@ -149,6 +149,18 @@ public class MMScreen implements Screen, InputProcessor {
 					game.setScreen (game.creditsScreen);
 				}
 				
+				if (GV.isAndroid && selection==4) {
+					game.myRequestHandler.sendMsg("showAchv");
+				}
+				
+				if (GV.isAndroid && selection==5) {
+					game.myRequestHandler.sendMsg("showLdrb");
+				}
+
+				if (GV.isAndroid && selection==6) {
+					game.myRequestHandler.sendMsg("ourGames");
+				}
+
 			}
 
 		}
@@ -226,7 +238,7 @@ public class MMScreen implements Screen, InputProcessor {
 
 		sizes();
 
-		GV.s=Save.loadGame();
+		//GV.s=Save.loadGame();
 		if (GV.s==null) noSavedGame=true;
 		
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();

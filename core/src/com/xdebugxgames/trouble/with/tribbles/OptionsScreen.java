@@ -53,14 +53,14 @@ public class OptionsScreen implements Screen, InputProcessor {
 			batch.draw(TH.texts[TH.ItxtOptT], optTX, optTY, TH.textsW[TH.ItxtOptT], TH.textsH[TH.ItxtOptT]);
 
 			for (p=0;p<numButtons;p++) {
-				if (p==0) if (!GV.opts.sfxOn) {
+				if (p==0) if (GV.opts.sfxOn) {
 					whatKind=TH.ItxtBtnGrn;
 					whatText = TH.ItxtSoundOn;
 				} else {
 					whatKind=TH.ItxtBtnRed;
 					whatText = TH.ItxtSoundOff;
 				}
-				if (p==1) if (!GV.opts.musicOn) {
+				if (p==1) if (GV.opts.musicOn) {
 					whatKind=TH.ItxtBtnGrn;  
 					whatText = TH.ItxtMusOn;
 				} else {

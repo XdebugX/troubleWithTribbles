@@ -17,20 +17,8 @@ public class Options implements Serializable {
 	
 	public String futureUseStrings[];
 	
-	public long futureUseLongs[];
+	public int futureUseLongs[];
 	
 	public float futureUseFloats[];
-	
-	public Options () {
-		futureUseBools = new boolean [100];
-		futureUseInts = new int [100];
-		futureUseStrings = new String [100];
-		futureUseLongs = new long [100];
-		futureUseFloats = new float [100];
-		
-		sfxOn=true;
-		musicOn=true;
-		loginGP=true;
-	}
 
 }
