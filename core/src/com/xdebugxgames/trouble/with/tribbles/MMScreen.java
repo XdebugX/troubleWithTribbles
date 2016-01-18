@@ -7,8 +7,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
@@ -17,8 +15,8 @@ public class MMScreen implements Screen, InputProcessor {
 	Tribbles game;
 	private SpriteBatch batch;
 	private OrthographicCamera camera;
-	private boolean selectBlobOn,clicked,oneFrame,showCPC,areYouSure,noSavedGame,selectGameType,paused,stretchIn,pullIn;
-	private int selectBlobI,selection,p,numMenuStrings,numGameType,numBtns,btnsTexts[],btnsTextsSure[],btnsTextsGP[];
+	private boolean selectBlobOn,clicked,showCPC,areYouSure,noSavedGame,selectGameType,paused,stretchIn,pullIn,doBack;
+	private int selectBlobI,selection,p,numMenuStrings,numBtns,btnsTexts[],btnsTextsSure[],btnsTextsGP[];
 	private static float logoH,pausedX,pausedY,btnsX,btnsSpac,btnsY,btnsTextsOffY[],btnsTextsOffX[],surePX,surePY,btnsTextsOffYSure[],btnsTextsOffXSure[],btnsTextsOffYGP[],btnsTextsOffXGP[],gameTypeX,gameTypeY,logoX,logoY,btnXOff,btnYOff,btnScaleOff,btnAlpha;
 	
 
@@ -84,12 +82,19 @@ public class MMScreen implements Screen, InputProcessor {
 
 		}//not paused
 		
+		if (selectBlobOn && selectBlobI==20) batch.setColor (0.5f,0.5f,0.5f,1.0f);
+		batch.draw(TH.texts[TH.ItxtBackArrow],0.0f,GV.h-TH.textsH[TH.ItxtBackArrow], TH.textsW[TH.ItxtBackArrow], TH.textsH[TH.ItxtBackArrow]);
+		batch.setColor (Color.WHITE);
+
 		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
 		if (clicked==true) {
 			selectBlobOn=false;
 			clicked=false;
+			
+			if (selection==20) doBack=true;
+
 
 			if (areYouSure) {
 				if (selection==0) {
@@ -197,12 +202,17 @@ public class MMScreen implements Screen, InputProcessor {
 
 		
 		if (showCPC) {
-			if (oneFrame) {
 				game.myRequestHandler.sendMsg("showCPAd");
 				showCPC=false;
-			} else oneFrame=true;
-
 		}
+		
+		if (doBack) {
+			doBack=false;
+			if (areYouSure) areYouSure=false; else 
+				if (selectGameType) selectGameType=false; else 
+					showCPC=true;
+		}
+			
 		
 	}
 
@@ -238,7 +248,7 @@ public class MMScreen implements Screen, InputProcessor {
 
 		sizes();
 
-		//GV.s=Save.loadGame();
+		GV.s=Save.loadGame();
 		if (GV.s==null) noSavedGame=true;
 		
 		if (GV.opts.musicOn) if (!TH.loopingMusic[TH.ImusicMM].isPlaying()) TH.loopingMusic[TH.ImusicMM].play();
@@ -290,13 +300,9 @@ public class MMScreen implements Screen, InputProcessor {
 
 		if(keycode == Keys.BACK || keycode == Keys.ESCAPE){
 			if (paused) resumeGame(); else {
-			if (areYouSure) areYouSure=false; else 
-			if (selectGameType) selectGameType=false; else {
-			oneFrame=false;
-			showCPC=true;
+				doBack=true;
 			}
-		}//not paused
-			
+		
 		}
 		return true;
 	}
@@ -344,6 +350,12 @@ public class MMScreen implements Screen, InputProcessor {
 		}
 		
 		}//not paused
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow]) {
+			selectBlobI=20;
+			selectBlobOn=true;
+		}
+
 
 		return true;
 	}
@@ -352,24 +364,13 @@ public class MMScreen implements Screen, InputProcessor {
 	public boolean touchUp (int x, int y, int pointer, int button) {
 
 		if (paused) resumeGame (); else {
-
-		
-		if (areYouSure) {
-			if (selectBlobOn) {
-				selection=selectBlobI;
-				clicked=true;
-			}
-		}
-
-		else {
-
+	
 			if (selectBlobOn) {
 				selection=selectBlobI;
 				clicked=true;
 			}
 
-		}
-		
+	
 		}//notpaused
 		
 		return true;
@@ -409,6 +410,11 @@ public class MMScreen implements Screen, InputProcessor {
 		}
 
 		}
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow] && selectBlobI==20) {
+			selectBlobOn=true;
+		}
+
 		
 		return true;
 	}

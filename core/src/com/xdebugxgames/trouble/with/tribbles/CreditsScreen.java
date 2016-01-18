@@ -23,8 +23,9 @@ public class CreditsScreen implements Screen, InputProcessor {
 	private static BitmapFontData bfD;
 
 	private static float creditTextScale,textX[],textY[],textH[],textW[],pausedScale,pausedX,pausedY,pausedW,pausedH;
-	private static int numTexts,p;
+	private static int numTexts,p,selectBlobI;
 	private static long pauseTime;
+	private static boolean selectBlobOn;
 	private static final String pausedString = "Paused";
 	private static final String creditText[] = {"Music:","\"Pamgaea\" Kevin MacLeod (incompetech.com)","Licensed under Creative Commons: By Attribution 3.0","http://creativecommons.org/licenses/by/3.0/","Trouble With Tribbles","Tribbles are born pregnant!","We must get them off the ship!","Luckily there is a Klingon ship nearby.","In order to use the transporter efficiently","the captain has ordered us to only beam","them when 2 or more are together.","Copyright 2016 XdebugX Games"};
 	
@@ -48,6 +49,7 @@ public class CreditsScreen implements Screen, InputProcessor {
 			batch.draw(TH.texts[TH.ItxtBack], 0, 0, TH.textsW[TH.ItxtBack], TH.textsH[TH.ItxtBack]);
 			batch.draw(TH.texts[TH.ItxtPlanet], GV.planetX, GV.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
 			batch.draw(TH.texts[TH.ItxtSatt], GV.sattX, GV.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
+			
 			
 			if (paused) {
 				
@@ -73,8 +75,12 @@ public class CreditsScreen implements Screen, InputProcessor {
 			}
 			batch.setColor (Color.WHITE);
 			}
-		 
-		batch.end();
+		
+			if (selectBlobOn && selectBlobI==20) batch.setColor (0.5f,0.5f,0.5f,1.0f);
+			batch.draw(TH.texts[TH.ItxtBackArrow],0.0f,GV.h-TH.textsH[TH.ItxtBackArrow], TH.textsW[TH.ItxtBackArrow], TH.textsH[TH.ItxtBackArrow]);
+			batch.setColor (Color.WHITE);
+
+			batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
 		if (clicked==true) {
@@ -158,17 +164,34 @@ public class CreditsScreen implements Screen, InputProcessor {
 
 	@Override
 	public boolean touchDown (int x, int y, int pointer, int button) {
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow]) {
+			selectBlobI=20;
+			selectBlobOn=true;
+		}
+
+		
 		return true;
 	}
 
 	@Override
 	public boolean touchUp (int x, int y, int pointer, int button) {
-		if (paused) resumeGame(); else clicked=true;
+		if (paused) resumeGame(); else {
+			selectBlobI=10;
+			selectBlobOn=false;
+			clicked=true;
+		}
 		return true;
 	}
 
 	@Override
 	public boolean touchDragged (int x, int y, int pointer) {
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow] && selectBlobI==20) {
+			selectBlobOn=true;
+		}
+
+		
 		return true;
 	}
 

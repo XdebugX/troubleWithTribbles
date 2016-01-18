@@ -46,6 +46,7 @@ public class GV {
 	  	  planetY=500.0f*GV.aspRatH;
 	  	  sattX=20.0f*GV.aspRatW;
 	  	  sattY=800.0f*GV.aspRatH;
+	  	 
 	}
 	
 	
@@ -71,6 +72,7 @@ public class GV {
 		GV.s.levelThresholds = new int [1000];
 		for (p=0;p<1000;p++) GV.s.levelThresholds[p] = (int) ((p+1)*100) * ((p+1)*3);
 		s.board = new int [s.boardW] [s.boardH];
+		s.boardIsExp = new boolean [s.boardW] [s.boardH];
 		s.boardState = new int [s.boardW] [s.boardH];
 		s.boardStateTimer = new float [s.boardW] [s.boardH];
 		s.boardX = new float [s.boardW] [s.boardH];
@@ -78,6 +80,7 @@ public class GV {
 		s.boardSpeed = new float [s.boardW] [s.boardH];
 		s.spawnFade = new float [s.boardW*3] [s.boardH*3];
 		s.spawnRow = new int [s.boardW];
+		s.spawnRowIsExp = new boolean [s.boardW];
 		s.spawnRowState = new int [s.boardW];
 		s.spawnRowStateTimer = new float [s.boardW];
 		s.spawnRowFade = new float [s.boardW];

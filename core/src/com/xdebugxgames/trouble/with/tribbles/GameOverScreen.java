@@ -72,10 +72,18 @@ public class GameOverScreen implements Screen, InputProcessor {
 
 		batch.setColor(Color.WHITE);
 		
+		if (selectBlobOn && selectBlobI==20) batch.setColor (0.5f,0.5f,0.5f,1.0f);
+		batch.draw(TH.texts[TH.ItxtBackArrow],0.0f,GV.h-TH.textsH[TH.ItxtBackArrow], TH.textsW[TH.ItxtBackArrow], TH.textsH[TH.ItxtBackArrow]);
+		batch.setColor (Color.WHITE);
+		
 		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
 		if (clicked) {
+			
+			if (selection==20) doBack=true;
+
+			
 			clicked=false;
 			selectBlobI=10;
 			selectBlobOn=false;
@@ -183,6 +191,12 @@ public class GameOverScreen implements Screen, InputProcessor {
 
 			}
 		}
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow]) {
+			selectBlobI=20;
+			selectBlobOn=true;
+		}
+
 
 		return true;
 	}
@@ -211,6 +225,11 @@ public class GameOverScreen implements Screen, InputProcessor {
 				}
 
 		}
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow] && selectBlobI==20) {
+			selectBlobOn=true;
+		}
+
 
 
 		return true;
@@ -228,11 +247,6 @@ public class GameOverScreen implements Screen, InputProcessor {
 
 
 	private void sizes () {
-		int p=0;
-
-
-
-
 		pausedX=(GV.w-TH.textsW[TH.ItxtPaused]) / 2.0f;
 		pausedY=(GV.h-TH.textsH[TH.ItxtPaused]) / 2.0f;
 

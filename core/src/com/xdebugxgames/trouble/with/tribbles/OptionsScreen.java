@@ -41,7 +41,6 @@ public class OptionsScreen implements Screen, InputProcessor {
 		batch.draw(TH.texts[TH.ItxtBack], 0, 0, TH.textsW[TH.ItxtBack], TH.textsH[TH.ItxtBack]);
 		batch.draw(TH.texts[TH.ItxtPlanet], GV.planetX, GV.planetY, TH.textsW[TH.ItxtPlanet], TH.textsH[TH.ItxtPlanet]);
 		batch.draw(TH.texts[TH.ItxtSatt], GV.sattX, GV.sattY, TH.textsW[TH.ItxtSatt], TH.textsH[TH.ItxtSatt]);
-
 		if (paused) {
 
 			batch.draw(TH.texts[TH.ItxtPixel], pausedX, pausedY, TH.textsW[TH.ItxtPaused], TH.textsH[TH.ItxtPaused]);
@@ -110,12 +109,17 @@ public class OptionsScreen implements Screen, InputProcessor {
 			}
 			 */
 		}
-
+		if (selectBlobOn && selectBlobI==20) batch.setColor (0.5f,0.5f,0.5f,1.0f);
+		batch.draw(TH.texts[TH.ItxtBackArrow],0.0f,GV.h-TH.textsH[TH.ItxtBackArrow], TH.textsW[TH.ItxtBackArrow], TH.textsH[TH.ItxtBackArrow]);
+		batch.setColor (Color.WHITE);
 		batch.end();
 
 		////////////////////////////////////////////// Update Game //////////////////////////////////////////////////////
 		if (clicked) {
 			clicked=false;
+			
+			if (selection==20) doBack=true;
+			
 			if (selection==0) {
 				GV.opts.sfxOn=!GV.opts.sfxOn;
 				saveOptions.save(GV.opts);
@@ -244,6 +248,11 @@ public class OptionsScreen implements Screen, InputProcessor {
 
 			}
 		}
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow]) {
+			selectBlobI=20;
+			selectBlobOn=true;
+		}
 
 		return true;
 	}
@@ -272,6 +281,11 @@ public class OptionsScreen implements Screen, InputProcessor {
 				}
 
 		}
+		
+		if (x<TH.textsW[TH.ItxtBackArrow] && y>GV.h-TH.textsH[TH.ItxtBackArrow] && selectBlobI==20) {
+			selectBlobOn=true;
+		}
+
 
 
 		return true;
